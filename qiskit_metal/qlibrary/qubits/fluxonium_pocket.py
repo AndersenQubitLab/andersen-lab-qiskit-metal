@@ -170,11 +170,11 @@ class FluxoniumPocket(BaseQubit):
         """
         self.make_pocket()
        
-        if self.p.flux_bias_line_options.make_fbl == True:
+        if self.p.flux_bias_line_options.make_fbl:
             self.make_flux_bias_line()
-        if self.p.charge_line_options.make_cl == True:
+        if self.p.charge_line_options.make_cl:
             self.make_charge_line()
-        if self.p.readout_line_options.make_rol == True:
+        if self.p.readout_line_options.make_rol:
             self.make_readout_line()
         
     def make_pocket(self):
@@ -210,7 +210,7 @@ class FluxoniumPocket(BaseQubit):
         mount_top = draw.translate(draw.rectangle(p.l_arm_length, p.l_width), (p.pad_width + p.l_arm_length)/ 2., +L_tot / 2.+ p.l_fillet)
         mount_bot = draw.translate(draw.rectangle(p.l_arm_length, p.l_width), (p.pad_width + p.l_arm_length)/ 2., -L_tot / 2.- p.l_fillet)
         seg_top = draw.translate(poly_seg, p.l_arm_length + p.pad_width / 2. , L_tot / 2.)
-        seg_bot = draw.translate(draw.rotate(poly_seg, -90, origin = (0,0)), p.l_arm_length + p.pad_width / 2. , -L_tot / 2.)
+        seg_bot = draw.translate(draw.rotate(poly_seg, -90, origin=(0, 0)), p.l_arm_length + p.pad_width / 2. , -L_tot / 2.)
 
         poly_wire_top.append(mount_top)
         poly_wire_top.append(seg_top)
@@ -240,12 +240,12 @@ class FluxoniumPocket(BaseQubit):
         
         self.add_qgeometry('junction', 
                            dict(inductor=inductor),
-                           width = p.l_width,
-                           hfss_inductance = str(l_inductance)+'nH')
+                           width=p.l_width,
+                           hfss_inductance=str(l_inductance)+'nH')
         self.add_qgeometry('junction',
                            dict(rect_jj=rect_jj),
                            width=p.inductor_width,
-                           hfss_inductance = p.L_j)
+                           hfss_inductance=p.L_j)
 
     def make_flux_bias_line(self):
         """ Adds flux bias line to fluxonium pocket."""
@@ -269,15 +269,15 @@ class FluxoniumPocket(BaseQubit):
         segments = draw.translate(segments, p.pos_x, p.pos_y)
         [fbl, fbl_gap] = segments
 
-        self.add_qgeometry('path',{'path':fbl}, layer=1, subtract=False, width=pf.cpw_width)
-        self.add_qgeometry('path',{'path':fbl_gap}, layer=1, subtract=True, width=pf.cpw_width + 2. * pf.cpw_gap)
+        self.add_qgeometry('path', {'path':fbl}, layer=1, subtract=False, width=pf.cpw_width)
+        self.add_qgeometry('path', {'path':fbl_gap}, layer=1, subtract=True, width=pf.cpw_width + 2. * pf.cpw_gap)
 
         # add pins
         fbl_pin1 = self.qpin_rotate_translate(d)
         fbl_pin2 = self.qpin_rotate_translate(e)
 
         self.add_pin('Flux bias line',
-                     points= [fbl_pin1, fbl_pin2],
+                     points=[fbl_pin1, fbl_pin2],
                      width=pf.cpw_width,
                      input_as_norm=True)
 
@@ -347,11 +347,11 @@ class FluxoniumPocket(BaseQubit):
         ro_pin2 = self.qpin_rotate_translate(a)
 
         self.add_pin('Readout line',
-                     points= [ro_pin1, ro_pin2],
+                     points=[ro_pin1, ro_pin2],
                      width=pr.cpw_width,
                      input_as_norm=True)
 
-    def qpin_rotate_translate(self,x):
+    def qpin_rotate_translate(self, x):
         p = self.p
         y = list(x)
         z = [0.0, 0.0]
