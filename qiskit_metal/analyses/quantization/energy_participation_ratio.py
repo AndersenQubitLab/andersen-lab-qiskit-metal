@@ -63,17 +63,20 @@ class EPRanalysis(QAnalysis):
     """Default data labels."""
 
     # TODO: renderer_name should default to None. Need to create a set renderer method
-    def __init__(self, design: 'QDesign', renderer_name: str = 'hfss'):
+    def __init__(self, design: 'QDesign' = None, renderer_name: str = None):
         """Performs Energy Participation Ratio (EPR) analysis on a simulated or
         user-provided eigenmode matrix.
 
         Args:
             design (QDesign): Pointer to the main qiskit-metal design.
-                Used to access the QRenderer.
-            renderer_name (str, optional): Which renderer to use. Defaults to 'hfss'.
+                Used to access the QRenderer. Defaults to None.
+            renderer_name (str, optional): Which renderer to use. Valid entries: 'hfss'.
+                Defaults to None.
         """
-        # set design and renderer
-        self.sim = None if renderer_name is None else EigenmodeSim(
+        # QAnalysis are expected to either run simulation or use pre-saved sim outputs
+        # we use a Dict() to store the sim outputs previously saved. Its key names need
+        # to match those found in the correspondent simulation class.
+        self.sim = Dict() if renderer_name is None else EigenmodeSim(
             design, renderer_name)
         super().__init__()
 
@@ -155,7 +158,8 @@ class EPRanalysis(QAnalysis):
         Returns:
             (dict): Pass numbers (keys) and respective energy participation ratio (values).
         """
-        self.sim.run_sim(*args, **kwargs)
+        if isinstance(self.sim, EigenmodeSim):
+            self.sim.run(*args, **kwargs)
         return self.run_epr()
 
     def run_epr(self, no_junctions=False):
@@ -169,7 +173,11 @@ class EPRanalysis(QAnalysis):
         if not no_junctions:
             self.run_analysis()
             self.spectrum_analysis(self.setup.cos_trunc, self.setup.fock_trunc, self.setup.flux, self.setup.basis)
-            self.report_hamiltonian(self.setup.sweep_variable)
+            try:
+                self.report_hamiltonian(self.setup.sweep_variable)
+            except AttributeError:
+                self.logger.error(
+                    "Please install a more recent version of pyEPR (>=0.8.5.3)")
 
     # TODO: all the epr methods should not use the renderer. Now they are forced to because of the
     #  pyEPR dependency from pinfo. pinfo however is Ansys specific and cannot be generalized as-is
@@ -212,11 +220,12 @@ class EPRanalysis(QAnalysis):
         """
         self.sim.renderer.epr_run_analysis()
 
-    def spectrum_analysis(self, cos_trunc: int = 8, fock_trunc: int = 7, flux: float = 0, basis: str = 'HO',):
+    def spectrum_analysis(self, cos_trunc: int = 8, fock_trunc: int = 7, flux: float = 0, basis: str = 'std',
+                          junctions = None):
         """Short-cut to the same-name method found in renderers.ansys_renderer.py.
         Eventually, the analysis code needs to be only here, and the renderer method deprecated.
         """
-        self.sim.renderer.epr_spectrum_analysis(cos_trunc, fock_trunc, flux, basis)
+        self.sim.renderer.epr_spectrum_analysis(cos_trunc, fock_trunc, flux, basis, junctions)
 
     def report_hamiltonian(self, sweep_variable, numeric=True):
         """Short-cut to the same-name method found in renderers.ansys_renderer.py.
@@ -270,3 +279,12 @@ class EPRanalysis(QAnalysis):
             'rect': rect,
             'line': line
         })
+
+    def load_simulation_data(self, data_name: str, data):
+        """Load simulation data for the following analysis. This will override any data found
+
+        Args:
+            data_name (str): name of the variable
+            data (Any): simulation output
+        """
+        self.sim[data_name] = data

@@ -1727,7 +1727,7 @@ class QAnsysRenderer(QRendererAnalysis):
             self.epr_start(junctions, dissipatives)
         self.epr_distributed_analysis.do_EPR_analysis()
 
-    def epr_spectrum_analysis(self, cos_trunc: int = 8, fock_trunc: int = 7, flux: float = 0,  basis: str = 'std'):
+    def epr_spectrum_analysis(self, cos_trunc: int = 8, fock_trunc: int = 7, flux: float = 0,  basis: str = 'std', junctions=None):
         """Core epr analysis method.
 
         Args:
@@ -1739,7 +1739,8 @@ class QAnsysRenderer(QRendererAnalysis):
         self.epr_quantum_analysis.analyze_all_variations(cos_trunc=cos_trunc,
                                                          fock_trunc=fock_trunc,
                                                          flux=flux,
-                                                         basis=basis)
+                                                         basis=basis,
+                                                         junctions=junctions)
 
     def epr_report_hamiltonian(self,
                                swp_variable: str = "variation",
