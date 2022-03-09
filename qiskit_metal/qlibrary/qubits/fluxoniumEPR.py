@@ -256,7 +256,7 @@ class FluxoniumPocket(BaseQubit):
         self.add_qgeometry('poly', dict(pad_top=pad_top, pad_bot=pad_bot, poly_wire_top = poly_wire_top, poly_wire_bot = poly_wire_bot))
         self.add_qgeometry('poly', dict(rect_pk=rect_pk), subtract=True)
         
-        self.add_qgeometry('path', 
+        self.add_qgeometry('junction',
                            dict(inductor=inductor),
                            width = p.l_length,
                            hfss_inductance = str(l_inductance)+'nH')
