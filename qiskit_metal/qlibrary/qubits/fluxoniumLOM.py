@@ -379,6 +379,12 @@ class FluxoniumPocket(BaseQubit):
         charge_line = draw.rectangle(cpw_width, cl_length, 0, 0)
         charge_line_gap = draw.rectangle(cpw_width+2*cpw_gap, cl_length+cpw_gap, 0, -cpw_gap/2)
 
+        # Making the charge_line and charge_line_gap circle and union them to charge_line and it's gap
+        charge_line_round = draw.Point(0., (-cl_length)/2).buffer(cpw_width/2.)
+        charge_line_gap_round = draw.Point(0., -(cl_length+cpw_gap)/2).buffer((cpw_width+2*cpw_gap)/2.)
+        charge_line = draw.union(charge_line, charge_line_round)
+        charge_line_gap = draw.union(charge_line_gap, charge_line_gap_round)
+
         # Charge Line CPW wire
         port_line = draw.LineString([(-cpw_width/2, cl_length/2),
                                      (cpw_width/2, cl_length/2)])
