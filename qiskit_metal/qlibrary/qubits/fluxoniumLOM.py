@@ -12,7 +12,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-# This class was created by Roald van den Boogaart, Christian Kraglund Andersen, Figen YILMAZ
+# This class was created by Figen YILMAZ, Christian Kraglund Andersen
 """Fluxonium Pocket"""
 
 import numpy as np
@@ -67,6 +67,9 @@ class FluxoniumPocket(BaseQubit):
 
     .. image::
         FluxoniumPocket.png
+    
+    .. meta::
+        Fluxonium Pocket
 
     Default Options:
         * pad_gap: '30um' -- The distance between the two charge islands, which is also the resulting 'length' of the pseudo junction
@@ -394,8 +397,6 @@ class FluxoniumPocket(BaseQubit):
         charge_line = draw.union(charge_line, charge_line_round)
         charge_line_gap = draw.union(charge_line_gap, charge_line_gap_round)
 
-
-
         # Charge Line CPW wire
         port_line = draw.LineString([(-cpw_width/2, cl_length/2),
                                      (cpw_width/2, cl_length/2)])
@@ -423,7 +424,6 @@ class FluxoniumPocket(BaseQubit):
         self.add_pin('charge_line', 
                     points, cpw_width)
 
-    
     def make_readout_line(self):
         """ Adds readout line to fluxonium pocket."""
         # self.p allows us to directly access parsed values (string -> numbers) form the user option
