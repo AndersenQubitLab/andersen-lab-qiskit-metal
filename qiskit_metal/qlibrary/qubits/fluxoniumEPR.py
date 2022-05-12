@@ -286,7 +286,8 @@ class FluxoniumPocket(BaseQubit):
                            hfss_inductance = str(l_inductance)+'nH')
         self.add_qgeometry('junction',
                            dict(rect_jj=rect_jj),
-                           width=p.inductor_width)
+                           width=p.inductor_width,
+                           hfss_inductance = p.L_j)
 
     def make_flux_bias_line(self):
         """ Adds flux bias line to fluxonium pocket."""
