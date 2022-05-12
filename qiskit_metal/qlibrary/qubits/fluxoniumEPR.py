@@ -15,6 +15,7 @@
 # This class was created by Roald van den Boogaart, Christian Kraglund Andersen, Figen YILMAZ
 """Fluxonium Pocket"""
 
+from operator import length_hint
 import numpy as np
 from qiskit_metal import draw, Dict
 from math import *
@@ -126,12 +127,13 @@ class FluxoniumPocket(BaseQubit):
         pad_height='120um',
         pad_radius='75um',
         l_width='20nm',
-        l_length='80um',
+    #    l_length='80um',
         l_arm_width = '2um',
         l_arm_length='50um',
         l_inductance='200nH',
         l_ind_per_square='2nH',
         L_j = '16.35nH',
+        nanol_length = '2um',
         pocket_width='800um',
         pocket_height='800um',
         nanowire_inductor='True',
@@ -201,22 +203,23 @@ class FluxoniumPocket(BaseQubit):
         pad_gap = p.pad_gap
         l_arm_length = p.l_arm_length
         l_arm_width = p.l_arm_width
-        l_length = p.l_length
+        nanol_length = p.nanol_length
         l_width = p.l_width
         nanowire_inductor = p.nanowire
-
+        
         # Calculate the L-tot
         ind_per_square = float(p.l_ind_per_square.replace('nH',''))
         l_inductance = float(p.l_inductance.replace('nH',''))
-        L_tot = l_inductance*l_width/ind_per_square
+        L_tot = l_inductance*nanol_length/ind_per_square
+        l_length = L_tot
 
         # Drawing the kinectic inductor
         if nanowire_inductor == True:
-            inductor = draw.rectangle(L_tot, l_length, l_arm_length-l_arm_width/2, 0)
+            inductor = draw.LineString([(l_arm_length, L_tot/2), (l_arm_length, -L_tot/2)])
 
         else:
             # This one is for JJ chain
-            inductor = draw.rectangle(L_tot, l_length, l_arm_length-l_arm_width/2, 0)
+            inductor = draw.LineString([(l_arm_length, L_tot/2), (l_arm_length, -L_tot/2)])
 
         # Draw 'the arms' and make them curvy, first top arm and then same goes for the bottom
         l_arm_up = draw.Polygon([
