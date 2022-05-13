@@ -126,14 +126,13 @@ class FluxoniumPocket(BaseQubit):
         pad_width='15um',
         pad_height='120um',
         pad_radius='75um',
-        l_width='20nm',
-    #    l_length='80um',
+        l_width='1um',
+        array_length='80um',
         l_arm_width = '2um',
         l_arm_length='50um',
         l_inductance='200nH',
         l_ind_per_square='2nH',
         L_j = '16.35nH',
-        nanol_length = '2um',
         pocket_width='800um',
         pocket_height='800um',
         nanowire_inductor='True',
@@ -203,23 +202,22 @@ class FluxoniumPocket(BaseQubit):
         pad_gap = p.pad_gap
         l_arm_length = p.l_arm_length
         l_arm_width = p.l_arm_width
-        nanol_length = p.nanol_length
         l_width = p.l_width
         nanowire_inductor = p.nanowire
-        
-        # Calculate the L-tot
-        ind_per_square = float(p.l_ind_per_square.replace('nH',''))
+
         l_inductance = float(p.l_inductance.replace('nH',''))
-        L_tot = l_inductance*nanol_length/ind_per_square
-        l_length = L_tot
 
         # Drawing the kinectic inductor
         if nanowire_inductor == True:
-            inductor = draw.LineString([(l_arm_length, L_tot/2), (l_arm_length, -L_tot/2)])
+            # Calculate the L-tot
+            ind_per_square = float(p.l_ind_per_square.replace('nH',''))
+            l_length = l_inductance*l_width/ind_per_square
 
+            inductor = draw.LineString([(l_arm_length, l_length/2), (l_arm_length, -l_length/2)])
         else:
+            l_length = p.array_length
             # This one is for JJ chain
-            inductor = draw.LineString([(l_arm_length, L_tot/2), (l_arm_length, -L_tot/2)])
+            inductor = draw.LineString([(l_arm_length, l_length/2), (l_arm_length, -l_length/2)])
 
         # Draw 'the arms' and make them curvy, first top arm and then same goes for the bottom
         l_arm_up = draw.Polygon([
@@ -283,7 +281,7 @@ class FluxoniumPocket(BaseQubit):
         self.add_qgeometry('poly', dict(rect_pk=rect_pk), subtract=True)
         # self.add_qgeometry('poly', dict(
         #     rect_jj=rect_jj), helper=True)
-        self.add_qgeometry('junction', # kinetic inductor added as 'path'
+        self.add_qgeometry('path', # kinetic inductor added as 'path'
                            dict(inductor=inductor),
                            width = l_width,
                            hfss_inductance = str(l_inductance)+'nH')
