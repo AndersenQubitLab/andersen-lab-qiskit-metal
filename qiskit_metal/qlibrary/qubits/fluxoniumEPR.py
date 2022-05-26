@@ -124,10 +124,10 @@ class FluxoniumPocket(BaseQubit):
         pad_gap='30um',
         inductor_width='10um',
         pad_width='15um',
-        pad_height='120um',
-        pad_radius='75um',
+        pad_height='140um',
+        pad_radius='80um',
         l_width='1um',
-        array_length='80um',
+        array_length='130um',
         l_arm_width = '2um',
         l_arm_length='50um',
         l_inductance='200nH',
@@ -136,6 +136,7 @@ class FluxoniumPocket(BaseQubit):
         pocket_width='800um',
         pocket_height='800um',
         nanowire_inductor='True',
+        gds_cell_inductor='gds_cell_inductor',
         # 90 has dipole aligned along the +X axis,
         # while 0 has dipole aligned along the +Y axis
         orientation='0',
@@ -217,7 +218,7 @@ class FluxoniumPocket(BaseQubit):
         else:
             l_length = p.array_length
             # This one is for JJ chain
-            inductor = draw.LineString([(l_arm_length, l_length/2), (l_arm_length, -l_length/2)])
+            inductor = draw.LineString([(l_arm_length+l_arm_width/1.5, l_length/2), (l_arm_length+l_arm_width/1.5, -l_length/2)])
 
         # Draw 'the arms' and make them curvy, first top arm and then same goes for the bottom
         l_arm_up = draw.Polygon([
@@ -284,7 +285,8 @@ class FluxoniumPocket(BaseQubit):
         self.add_qgeometry('junction', # kinetic inductor added as 'path'
                            dict(inductor=inductor),
                            width = l_width,
-                           hfss_inductance = str(l_inductance)+'nH')
+                           hfss_inductance = str(l_inductance)+'nH',
+                           gds_cell_name=p.gds_cell_inductor)
         self.add_qgeometry('junction',
                            dict(rect_jj=rect_jj),
                            width=p.inductor_width,
