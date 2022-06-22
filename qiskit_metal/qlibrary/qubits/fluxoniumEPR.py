@@ -123,6 +123,7 @@ class FluxoniumPocket(BaseQubit):
         chip='main',
         pad_gap='30um',
         inductor_width='10um',
+        inductor_orientation='+1',
         pad_width='15um',
         pad_height='140um',
         pad_radius='80um',
@@ -218,7 +219,8 @@ class FluxoniumPocket(BaseQubit):
         else:
             l_length = p.array_length
             # This one is for JJ chain
-            inductor = draw.LineString([(l_arm_length+l_arm_width/1.5, l_length/2), (l_arm_length+l_arm_width/1.5, -l_length/2)])
+            io = float(p.inductor_orientation)
+            inductor = draw.LineString([(l_arm_length-l_arm_width, io*l_length/2), (l_arm_length-l_arm_width, -io*l_length/2)])
 
         # Draw 'the arms' and make them curvy, first top arm and then same goes for the bottom
         l_arm_up = draw.Polygon([
