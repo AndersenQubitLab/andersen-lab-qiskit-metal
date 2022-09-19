@@ -79,7 +79,7 @@ class FluxoniumPocket(BaseQubit):
         * pad_height: '300um' -- The size (y-axis) of the charge island pads
         * pad_radius: '80um' -- Radius of the circle at the end of the pads
         * l_length: '1um' -- Length of the kinetic inductor along the y-axis
-        * l_arm_length: '200um' -- Length of the arm of the kinetic inductor along x-axis
+        * l_arm_length: '100um' -- Length of the arm of the kinetic inductor along the x-axis
         * l_inductance: '200nH' -- 
         * l_ind_per_square: '2nH' --
         * L_j: '16.35nH' --
@@ -123,19 +123,19 @@ class FluxoniumPocket(BaseQubit):
         chip='main',
         pad_gap='30um',
         inductor_width='10um',
-        inductor_orientation='+1',
+        inductor_orientation='-1',
         pad_width='15um',
-        pad_height='140um',
-        pad_radius='80um',
+        pad_height='110um',
+        pad_radius='45um',
         l_width='1um',
         array_length='130um',
         l_arm_width = '2um',
-        l_arm_length='50um',
+        l_arm_length='25um',
         l_inductance='200nH',
         l_ind_per_square='2nH',
         L_j = '16.35nH',
-        pocket_width='800um',
-        pocket_height='800um',
+        pocket_width='900um',
+        pocket_height='550um',
         nanowire_inductor='True',
         gds_cell_inductor='gds_cell_inductor',
         # 90 has dipole aligned along the +X axis,
@@ -143,15 +143,15 @@ class FluxoniumPocket(BaseQubit):
         orientation='0',
         flux_bias_line_options=Dict(
             make_fbl = False,
-            fbl_sep='100um',
+            fbl_sep='85um',
             fbl_height ='50um',
-            cpw_width ='cpw_width',
-            cpw_gap = 'cpw_gap',
+            cpw_width ='10um',
+            cpw_gap = '11.233um',
         ),
         charge_line_options=Dict(
             make_cl = False,
             cl_length = '100um',
-            cl_sep ='15um',
+            cl_sep ='-15um',
             cpw_width='cpw_width',
             cpw_gap= 'cpw_gap',
             loc_W='0',  # width location only 0,
@@ -159,9 +159,9 @@ class FluxoniumPocket(BaseQubit):
         ),
         readout_line_options=Dict(
             make_rol = False,
-            pad_sep='100um',
-            pad_width = '150um',
-            pad_height = '50um',
+            pad_sep='75um',
+            pad_width = '400um',
+            pad_height = '120um',
             cpw_width='cpw_width',
             cpw_gap='cpw_gap',
             loc_W='0',  # width location only 0,
@@ -218,7 +218,7 @@ class FluxoniumPocket(BaseQubit):
             inductor = draw.LineString([(l_arm_length, l_length/2), (l_arm_length, -l_length/2)])
         else:
             l_length = p.array_length
-            # This one is for JJ chain
+            # This one is for JJ array
             io = float(p.inductor_orientation)
             inductor = draw.LineString([(l_arm_length-l_arm_width, io*l_length/2), (l_arm_length-l_arm_width, -io*l_length/2)])
 
@@ -405,8 +405,8 @@ class FluxoniumPocket(BaseQubit):
         charge_line_gap = draw.rectangle(cpw_width+2*cpw_gap, cl_length+cpw_gap/2, 0, -cpw_gap/4)
 
         # Making the charge_line and charge_line_gap circle and union them to charge_line and it's gap
-        charge_line_round = draw.Point(0., (-cl_length)/2).buffer(cpw_width/2.)
-        charge_line_gap_round = draw.Point(0., -(cl_length+cpw_gap)/2).buffer((cpw_width+2*cpw_gap)/2.)
+        charge_line_round = draw.Point(0., (-cl_length)/2).buffer(cpw_width)
+        charge_line_gap_round = draw.Point(0., -(cl_length+cpw_gap)/2.2).buffer((cpw_width+2*cpw_gap))
         charge_line = draw.union(charge_line, charge_line_round)
         charge_line_gap = draw.union(charge_line_gap, charge_line_gap_round)
 
