@@ -34,23 +34,12 @@ class Frame(QComponent):
     Inherits 'QComponent' class.
 
     .. image:
-        LaunchpadWirebondCoupled.png
+        *.png
 
     .. meta::
-        Launchpad Wirebond Coupled
+        *
 
-    Creates a 50 ohm launch pad with a ground pocket cutout.
-    Limited but expandable parameters to control the launchpad polygons.
-    The (0,0) point is the center of the necking of the launch tip.
-    The pin attaches directly to the built in lead length at its midpoint
-    This launch has an inductive coupler section.
-
-    Pocket and pad:
-        Pocket and launch pad geometries are currently fixed.
-        (0,0) point is the midpoint of the necking of the launch tip.
-        Pocket is a negative shape that is cut out of the ground plane
-
-    Values (unless noted) are strings with units included, (e.g., '30um')
+    Values (unless noted) are strings with units included, (e.g., '20um')
 
     Sketch:
         Below is a sketch of one marker
