@@ -70,16 +70,16 @@ class Markers(QComponent):
         * pos_x = '0.0mm' -- the x position of the marker
         * pos_y = '0.0mm' -- the y position of the marker
         * marker_sep = '20um' -- the distance between each marker
-        * marker_w='20um' -- marker width
-        * marker_h='20um' -- marker height
+        * marker_w = '20um' -- marker width
+        * marker_h = '20um' -- marker height
     """
 
     default_options = Dict(
         pos_x = '0.0mm',
         pos_y = '0.0mm',
         marker_sep = '20um',
-        marker_w='20um',
-        marker_h='20um',
+        marker_w ='20um',
+        marker_h ='20um',
          )
     """Default options"""
 
