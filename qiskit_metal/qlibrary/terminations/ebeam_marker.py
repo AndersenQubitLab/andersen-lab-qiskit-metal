@@ -34,10 +34,10 @@ class Markers(QComponent):
     .. meta::
         Markers
 
-    Creates 4 set of markers for EBPG marker search. 
-    The (0,0) point is the center of the these 4 markers.
-
-    Values (unless noted) are strings with units included, (e.g., '20um')
+    Creates 4 sets of markers for EBPG marker search. 
+    The (0,0) point is the centre of these 4 markers.
+    For how their named one can check the drawing below. 
+    2 Dimensional Cartesian Coordinate System is the way how they are named.
 
     Sketch:
         Below is a sketch of one the marker set.
