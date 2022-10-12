@@ -12,32 +12,27 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-#  This a launch structure used on BlueJayV2, used for wire bonding
-#  There is no CPW tee attached to this p#
-
 # This class was created by Figen YILMAZ
 
 # Imports required for drawing
 
 # import numpy as np # (currently not used, may be needed later for component customization)
-from turtle import width
 from qiskit_metal import draw
 from qiskit_metal.toolbox_python.attr_dict import Dict
 from qiskit_metal.qlibrary.core import QComponent
 
-# Define class and options for the launch geometry
-
+# Define class and options for the markers geometry
 
 class Markers(QComponent):
-    """Launch pad to feed/read signals to/from the chip.
+    """Markers for the EBPG marker search; positive markers.
 
     Inherits 'QComponent' class.
 
     .. image:
-        *.png
+        Markers.png
 
     .. meta::
-        *
+        Markers
 
     Creates a 50 ohm launch pad with a ground pocket cutout.
     Limited but expandable parameters to control the launchpad polygons.
@@ -78,8 +73,8 @@ class Markers(QComponent):
         pos_x = '0.0mm',
         pos_y = '0.0mm',
         marker_sep = '20um',
-        marker_w ='20um',
-        marker_h ='20um',
+        marker_w = '20um',
+        marker_h = '20um',
          )
     """Default options"""
 
