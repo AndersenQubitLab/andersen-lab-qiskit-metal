@@ -12,9 +12,6 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-#  This a launch structure used on BlueJayV2, used for wire bonding
-#  There is no CPW tee attached to this p#
-
 # This class was created by Figen YILMAZ
 
 # Imports required for drawing
@@ -27,49 +24,48 @@ from qiskit_metal.qlibrary.core import QComponent
 
 # Define class and options for the launch geometry
 
-
 class Frame(QComponent):
-    """Launch pad to feed/read signals to/from the chip.
+    """The frame will be on the device as 'positive'.
 
     Inherits 'QComponent' class.
 
     .. image:
-        *.png
+        Frame.png
 
     .. meta::
-        *
+        Frame
 
     Values (unless noted) are strings with units included, (e.g., '20um')
 
     Sketch:
-        Below is a sketch of one marker
+        Below is a sketch of the frame
         ::
 
-             __________                  y                                 |
-            |          |                  ^                            2   |   1
-            |          |                  |                         _______|_______
-            |          |                  |                                | 
-            |__________|                  |------> x                  3    |   4
-      
+             ===========                   y                                 |
+            ||          ||                  ^                            2   |   1
+            ||          ||                  |                                |
+            ||          ||                  |                         _______|_______
+            ||          ||                  |                                | 
+            ||          ||                  |------> x                  3    |   4
+             ===========                                                     |
 
     .. image::
         Markers.png
 
     Default Options:
-        * marker: '20um' -- center trace width of the marker
+        * frame_w: '9mm' -- the width of the frame. That's our device size; decided to be 9*9mm square
+        * frame_h: '9mm' -- the width of the frame. That's our device size; decided to be 9*9mm square
+        * f_width: '70um' -- the thickness of the frame line, can be arrange accordingly dicing blade thickness 
     """
 
     default_options = Dict(
-        chip='main',
-        pos_x = '0.0 mm',
-        pos_y = '0.0 mm',
         frame_w = '9mm',
         frame_h = '9mm',
         f_width = '70um',
         )
     """Default options"""
 
-    TOOLTIP = """Markers for the chip."""
+    TOOLTIP = """Frame of the chip."""
 
     def make(self):
         """This is executed by the user to generate the qgeometry for the
