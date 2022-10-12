@@ -34,28 +34,20 @@ class Markers(QComponent):
     .. meta::
         Markers
 
-    Creates a 50 ohm launch pad with a ground pocket cutout.
-    Limited but expandable parameters to control the launchpad polygons.
-    The (0,0) point is the center of the necking of the launch tip.
-    The pin attaches directly to the built in lead length at its midpoint
-    This launch has an inductive coupler section.
+    Creates 4 set of markers for EBPG marker search. 
+    The (0,0) point is the center of the these 4 markers.
 
-    Pocket and pad:
-        Pocket and launch pad geometries are currently fixed.
-        (0,0) point is the midpoint of the necking of the launch tip.
-        Pocket is a negative shape that is cut out of the ground plane
-
-    Values (unless noted) are strings with units included, (e.g., '30um')
+    Values (unless noted) are strings with units included, (e.g., '20um')
 
     Sketch:
-        Below is a sketch of one marker
+        Below is a sketch of one the marker set.
         ::
 
-             __________                  y                                 |
-            |          |                  ^                            2   |   1
-            |          |                  |                         _______|_______
-            |          |                  |                                | 
-            |__________|                  |------> x                  3    |   4
+             __    __          y                            |
+            |__|  |__|          ^                       2   |   1
+                                |                    _______|_______
+             __    __           |                           | 
+            |__|  |__|          |------> x              3   |   4
       
 
     .. image::
@@ -85,12 +77,12 @@ class Markers(QComponent):
         component."""
 
         p = self.p
-        marker_w = p.marker_w
-        marker_h = p.marker_h
         pos_x = p.pos_x
         pos_y = p.pos_y
         marker_sep = p.marker_sep
-
+        marker_w = p.marker_w
+        marker_h = p.marker_h
+        
         # Square shape markers for E-Beam marker search, see the drawing above for their positions
         # on the cartesian coordinate system
         marker_1 = draw.rectangle(marker_w, marker_h, pos_x/2 + marker_sep, pos_y/2 + marker_sep)
