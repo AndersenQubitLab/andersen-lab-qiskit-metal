@@ -35,27 +35,25 @@ class Frame(QComponent):
     .. meta::
         Frame
 
-    Values (unless noted) are strings with units included, (e.g., '20um')
-
     Sketch:
         Below is a sketch of the frame
         ::
 
-             ===========                   y                                 |
-            ||          ||                  ^                            2   |   1
-            ||          ||                  |                                |
-            ||          ||                  |                         _______|_______
-            ||          ||                  |                                | 
-            ||          ||                  |------> x                  3    |   4
-             ===========                                                     |
+             ===========                  y                              |
+            ||          ||                 ^                         2   |   1
+            ||          ||                 |                             |
+            ||          ||                 |                      _______|_______
+            ||          ||                 |                             | 
+            ||          ||                 |------> x               3    |   4
+             ===========                                                 |
 
     .. image::
-        Markers.png
+        Frame.png
 
     Default Options:
-        * frame_w: '9mm' -- the width of the frame. That's our device size; decided to be 9*9mm square
-        * frame_h: '9mm' -- the width of the frame. That's our device size; decided to be 9*9mm square
-        * f_width: '70um' -- the thickness of the frame line, can be arrange accordingly dicing blade thickness 
+        * frame_w: '9mm' -- the width of the frame. That's our device size; we decided to be 9*9mm square
+        * frame_h: '9mm' -- the width of the frame. That's our device size; we decided to be 9*9mm square
+        * f_width: '70um' -- the thickness of the frame line can be arranged accordingly dicing blade thickness 
     """
 
     default_options = Dict(
@@ -65,7 +63,7 @@ class Frame(QComponent):
         )
     """Default options"""
 
-    TOOLTIP = """Frame of the chip."""
+    TOOLTIP = """Frame on the chip."""
 
     def make(self):
         """This is executed by the user to generate the qgeometry for the
