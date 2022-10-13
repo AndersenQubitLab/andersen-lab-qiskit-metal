@@ -18,6 +18,7 @@
 
 # import numpy as np # (currently not used, may be needed later for component customization)
 from qiskit_metal import draw
+from qiskit_metal.draw.basic import subtract
 from qiskit_metal.toolbox_python.attr_dict import Dict
 from qiskit_metal.qlibrary.core import QComponent
 
@@ -42,13 +43,13 @@ class Markers(QComponent):
     Sketch:
         Below is a sketch of one the marker set.
         ::
-
-             __    __          y                            |
-            |__|  |__|          ^                       2   |   1
-                                |                    _______|_______
-             __    __           |                           | 
-            |__|  |__|          |------> x              3   |   4
-      
+         ______________
+        |   __    __   |       y                            |
+        |  |__|  |__|  |        ^                       2   |   1
+        |              |        |                    _______|_______
+        |   __    __   |        |                           | 
+        |  |__|  |__|  |        |------> x              3   |   4
+        |______________|
 
     .. image::
         Markers.png
@@ -92,15 +93,21 @@ class Markers(QComponent):
 
         markers = draw.union(marker_1, marker_2, marker_3, marker_4)
 
+        # Create the pocket for the markers to have a positive markers on the ground plane
+        markers_pk = draw.rectangle(marker_w*5, marker_h*5, pos_x/2, pos_y/2)
+
         # Create polygon object list
-        polys = [markers]
+        polys = [markers, markers_pk]
         # Rotates and translates all the objects as requested. Uses package functions
         # in 'draw_utility' for easy rotation/translation
         polys = draw.rotate(polys, p.orientation, origin=(0, 0))
         polys = draw.translate(polys, xoff=pos_x/2, yoff=pos_y/2)
-        [markers] = polys
+        [markers, markers_pk] = polys
 
         # Adds the object to the qgeometry table
+        self.add_qgeometry('poly', dict(markers=markers),layer=p.layer)
+        # Subtracts out ground plane on the layer its on
         self.add_qgeometry('poly',
-                           dict(markers=markers),
+                           dict(markers_pk=markers_pk),
+                           subtract=True,
                            layer=p.layer)
