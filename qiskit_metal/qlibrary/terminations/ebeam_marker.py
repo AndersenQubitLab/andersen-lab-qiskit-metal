@@ -57,9 +57,10 @@ class Markers(QComponent):
     Default Options:
         * pos_x = '0.0mm' -- the x position of the marker
         * pos_y = '0.0mm' -- the y position of the marker
-        * marker_sep = '20um' -- the distance between each marker
+        * marker_sep = '40um' -- the distance between each marker
         * marker_w = '20um' -- marker width
         * marker_h = '20um' -- marker height
+        * markers_gap = '200um' -- Size of the pocket (cut out in ground)
     """
 
     default_options = Dict(
@@ -95,7 +96,7 @@ class Markers(QComponent):
 
         markers = draw.union(marker_1, marker_2, marker_3, marker_4)
 
-        # Create the pocket for the markers to have a positive markers on the ground plane
+        # Create the pocket for the markers to distinguish as positive markers on the substrate
         markers_pk = draw.rectangle(markers_gap, markers_gap, pos_x/2, pos_y/2)
 
         # Create polygon object list
