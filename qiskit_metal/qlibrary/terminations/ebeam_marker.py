@@ -65,9 +65,10 @@ class Markers(QComponent):
     default_options = Dict(
         pos_x = '0.0mm',
         pos_y = '0.0mm',
-        marker_sep = '20um',
+        marker_sep = '40um',
         marker_w = '20um',
         marker_h = '20um',
+        markers_gap = '200um',
          )
     """Default options"""
 
@@ -83,6 +84,7 @@ class Markers(QComponent):
         marker_sep = p.marker_sep
         marker_w = p.marker_w
         marker_h = p.marker_h
+        markers_gap = p.markers_gap
         
         # Square shape markers for E-Beam marker search, see the drawing above for their positions
         # on the cartesian coordinate system
@@ -94,7 +96,7 @@ class Markers(QComponent):
         markers = draw.union(marker_1, marker_2, marker_3, marker_4)
 
         # Create the pocket for the markers to have a positive markers on the ground plane
-        markers_pk = draw.rectangle(marker_w*5, marker_h*5, pos_x/2, pos_y/2)
+        markers_pk = draw.rectangle(markers_gap, markers_gap, pos_x/2, pos_y/2)
 
         # Create polygon object list
         polys = [markers, markers_pk]
