@@ -88,25 +88,25 @@ class FluxoniumPocket(BaseQubit):
         * orientation: '0' -- Degree of qubit rotation
         * flux_bias_line_options=Dict
             * make_fbl = True -- Boolean to make the flux bias line 
-            * fbl_sep='100um' -- The separation between the flux bias line and the inductor along the x-axis
-            * fbl_height ='50um' -- The height of the flux bias line along the y-axis
-            * cpw_width ='cpw_width' -- The width of the flux bias line
-            * cpw_gap = 'cpw_gap' -- The dielectric gap width of the flux bias line    
+            * fbl_sep: '100um' -- The separation between the flux bias line and the inductor along the x-axis
+            * fbl_height: '50um' -- The height of the flux bias line along the y-axis
+            * cpw_width: 'cpw_width' -- The width of the flux bias line
+            * cpw_gap: 'cpw_gap' -- The dielectric gap width of the flux bias line    
         * charge_line_options=Dict
             * make_cl = True -- Boolean to make the charge line
-            * cl_length ='80um' -- 
-            * cl_sep ='15um' -- The separation between the connection pad and the pocket the y-axis
-            * cpw_width='cpw_width' -- The width of the charge line
-            * cpw_gap= 'cpw_gap' -- The dielectric gap width of the charge line
+            * cl_length: '80um' -- 
+            * cl_sep: '15um' -- The separation between the connection pad and the pocket the y-axis
+            * cpw_width: 'cpw_width' -- The width of the charge line
+            * cpw_gap: 'cpw_gap' -- The dielectric gap width of the charge line
             * loc_W / H -- which 'quadrant' of the pocket the connector is set to, +/- 1 (check
               if diagram is correct)
         * readout_line_options=Dict(
             * make_rol = True -- Boolean to make the readout line
-            * pad_sep='50um' -- The separation between the connection pad and the capacitor pad the y-axis
-            * pad_width='150um' -- Width of the connection pad along the x-axis  
-            * pad_height='50um', -- Height of the connection pad along the y-axis
-            * cpw_width='cpw_width', -- The width of the charge line
-            * cpw_gap='cpw_gap' -- The dielectric gap width of the readout line
+            * pad_sep: '50um' -- The separation between the connection pad and the capacitor pad the y-axis
+            * pad_width: '150um' -- Width of the connection pad along the x-axis  
+            * pad_height:'50um', -- Height of the connection pad along the y-axis
+            * cpw_width: 'cpw_width', -- The width of the charge line
+            * cpw_gap: 'cpw_gap' -- The dielectric gap width of the readout line
             * loc_W / H -- which 'quadrant' of the pocket the connector is set to, +/- 1 (check
               if diagram is correct)
     """
@@ -125,15 +125,15 @@ class FluxoniumPocket(BaseQubit):
         inductor_width='10um',
         inductor_orientation='-1',
         pad_width='15um',
-        pad_height='110um',
-        pad_radius='45um',
+        pad_height='100um',
+        pad_radius='60um',
         l_width='1um',
         array_length='130um',
         l_arm_width = '2um',
         l_arm_length='25um',
         l_inductance='200nH',
         l_ind_per_square='2nH',
-        L_j = '16.35nH',
+        L_j = '34.38nH',
         pocket_width='900um',
         pocket_height='550um',
         nanowire_inductor='True',
@@ -159,7 +159,7 @@ class FluxoniumPocket(BaseQubit):
         ),
         readout_line_options=Dict(
             make_rol = False,
-            pad_sep='75um',
+            pad_sep='85um',
             pad_width = '400um',
             pad_height = '120um',
             cpw_width='cpw_width',
@@ -284,7 +284,7 @@ class FluxoniumPocket(BaseQubit):
         self.add_qgeometry('poly', dict(rect_pk=rect_pk), subtract=True)
         # self.add_qgeometry('poly', dict(
         #     rect_jj=rect_jj), helper=True)
-        self.add_qgeometry('junction', # kinetic inductor added as 'path'
+        self.add_qgeometry('junction', # kinetic inductor
                            dict(inductor=inductor),
                            width = l_width,
                            hfss_inductance = str(l_inductance)+'nH',
