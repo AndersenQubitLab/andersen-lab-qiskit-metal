@@ -138,7 +138,7 @@ class Tmon(BaseQubit):
             self.make_flux_bias_line()
         
     def make_pocket(self):
-        """Makes a Half Crossmon, 3 arm cross."""
+        """Makes a Tmon shape grounded qubit with 3 arm, half-cross."""
 
         # self.p allows us to directly access parsed values (string -> numbers) form the user option
         p = self.p
@@ -159,10 +159,10 @@ class Tmon(BaseQubit):
         # since arms defined before then bulp shape on the corners will be palm.
         pad_palm_left = draw.Point(-pad_arm_length/2, 0).buffer(palm_radius/2) 
         pad_palm_right = draw.Point(pad_arm_length/2, 0).buffer(palm_radius/2)
-        # we union all the capacitance as half_cross
-        half_cross = draw.union(pad_north, pad_equator, pad_palm_left, pad_palm_right)
+        # we union all the capacitance as 't' shape
+        tmon = draw.union(pad_north, pad_equator, pad_palm_left, pad_palm_right)
 
-        # grounded half_crossmon needs to have gap around it
+        # grounded tmon needs to have gap around it
         pad_gap_north = draw.rectangle(pad_head_width+2*pad_gap, pad_head_length+2*jj_gap, 0, pad_head_length/2)
         pad_gap_equator = draw.rectangle(pad_arm_length+2*pad_gap, pad_arm_width+pad_gap*2, 0, 0)
         pad_palm_gap_left = draw.Point(-pad_arm_length/2, 0).buffer(palm_radius*2)
@@ -177,13 +177,13 @@ class Tmon(BaseQubit):
         # rect_jj = draw.rectangle(p.inductor_width, pad_gap)
 
         # Rotate and translate all qgeometry as needed.
-        polys = [rect_jj, half_cross, pad_etch]
+        polys = [rect_jj, tmon, pad_etch]
         polys = draw.rotate(polys, p.orientation, origin=(0, 0))
         polys = draw.translate(polys, p.pos_x, p.pos_y)
-        [rect_jj, half_cross, pad_etch] = polys
+        [rect_jj, tmon, pad_etch] = polys
 
         # Use the geometry to create Metal qgeometry
-        self.add_qgeometry('poly', dict(half_cross=half_cross))
+        self.add_qgeometry('poly', dict(tmon=tmon))
         self.add_qgeometry('poly',
                            dict(pad_etch=pad_etch),
                            subtract=True)
@@ -195,7 +195,7 @@ class Tmon(BaseQubit):
                            )
 
     def make_flux_bias_line(self):
-        """ Adds flux bias line to the half_crossmon."""
+        """ Adds flux bias line to the tmon."""
         # self.p allows us to directly access parsed values (string -> numbers) form the user option
  
         p = self.p
