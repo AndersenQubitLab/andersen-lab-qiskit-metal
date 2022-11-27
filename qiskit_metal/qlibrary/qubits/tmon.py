@@ -72,8 +72,8 @@ class Tmon(BaseQubit):
         Tmon
 
     Default Options:
-        * jj_width: '20um' -- Width of the pseudo junction on the x-axis. Really just for simulating in HFSS / other EM software
-        * jj_gap: '40um' -- Width of the pseudo junction on the y-axis. Really just for simulating in HFSS / other EM software
+        * jj_width: '30um' -- Width of the pseudo junction on the x-axis. Really just for simulating in HFSS / other EM software
+        * jj_gap: '30um' -- Width of the pseudo junction on the y-axis. Really just for simulating in HFSS / other EM software
         * pad_head_width: '400um' -- The 'head' capacitance lenght along the x-axis
         * pad_head_length: '400um' -- The 'head' capacitance lenght along the y-axis
         * pad_arm_width: '100um' -- The 'equator' capacitance lenght along the x-axis
@@ -100,7 +100,7 @@ class Tmon(BaseQubit):
     # Default drawing options
     default_options = Dict(
         chip='main',
-        jj_width='20um',
+        jj_width='30um',
         jj_gap='30um',
         pad_head_width='40um',
         pad_head_length='400um',
