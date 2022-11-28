@@ -72,8 +72,8 @@ class Tmon(BaseQubit):
         Tmon
 
     Default Options:
-        * jj_width: '30um' -- Width of the pseudo junction on the x-axis. Really just for simulating in HFSS / other EM software
-        * jj_gap: '30um' -- Width of the pseudo junction on the y-axis. Really just for simulating in HFSS / other EM software
+        * jj_width: '10um' -- Width of the pseudo junction on the x-axis. Really just for simulating in HFSS / other EM software
+        * jj_gap: '40um' -- Width of the pseudo junction on the y-axis. Really just for simulating in HFSS / other EM software
         * pad_head_width: '400um' -- The 'head' capacitance lenght along the x-axis
         * pad_head_length: '400um' -- The 'head' capacitance lenght along the y-axis
         * pad_arm_width: '100um' -- The 'equator' capacitance lenght along the x-axis
@@ -100,7 +100,7 @@ class Tmon(BaseQubit):
     # Default drawing options
     default_options = Dict(
         chip='main',
-        jj_width='30um',
+        jj_width='10um',
         jj_gap='30um',
         pad_head_width='40um',
         pad_head_length='400um',
@@ -144,7 +144,6 @@ class Tmon(BaseQubit):
         p = self.p
 
         # since we will reuse these options, parse them once and define them as variables
-        jj_width=p.jj_width
         jj_gap=p.jj_gap
         pad_head_width = p.pad_head_width
         pad_head_length = p.pad_head_length
@@ -171,8 +170,8 @@ class Tmon(BaseQubit):
         pad_etch = draw.union(pad_gap_north, pad_gap_equator, pad_palm_gap_left, pad_palm_gap_right)
 
         # Draw the junction
-        rect_jj = draw.LineString([(-jj_width/2, (jj_gap/2.0+pad_head_length)), 
-                                    (jj_width/2, jj_gap/2.0+pad_head_length)])
+        rect_jj = draw.LineString([(0, pad_head_length+jj_gap), 
+                                    (0, pad_head_length)])
         # the draw.rectangle representing the josephson junction
         # rect_jj = draw.rectangle(p.inductor_width, pad_gap)
 
