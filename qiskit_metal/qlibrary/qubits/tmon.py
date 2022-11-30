@@ -72,7 +72,7 @@ class Tmon(BaseQubit):
         Tmon
 
     Default Options:
-        * jj_width: '10um' -- Width of the pseudo junction on the x-axis. Really just for simulating in HFSS / other EM software
+        * inductor_width: '10um' -- Width of the pseudo junction on the x-axis. Really just for simulating in HFSS / other EM software
         * jj_gap: '40um' -- Width of the pseudo junction on the y-axis. Really just for simulating in HFSS / other EM software
         * pad_head_width: '400um' -- The 'head' capacitance lenght along the x-axis
         * pad_head_length: '400um' -- The 'head' capacitance lenght along the y-axis
@@ -100,7 +100,7 @@ class Tmon(BaseQubit):
     # Default drawing options
     default_options = Dict(
         chip='main',
-        jj_width='10um',
+        inductor_width='10um',
         jj_gap='30um',
         pad_head_width='40um',
         pad_head_length='400um',
@@ -113,7 +113,7 @@ class Tmon(BaseQubit):
         orientation='0',
         flux_bias_line_options=Dict(
             make_fbl = False,
-            fbl_sep='100um',
+            fbl_sep='60um',
             fbl_height ='80um',
             fbl_width = '30um',
             cpw_width ='cpw_width',
@@ -190,7 +190,7 @@ class Tmon(BaseQubit):
         #     rect_jj=rect_jj), helper=True)
         self.add_qgeometry('junction',
                            dict(rect_jj=rect_jj),
-                           width=p.jj_width,
+                           width=p.inductor_width,
                            )
 
     def make_flux_bias_line(self):
@@ -224,12 +224,12 @@ class Tmon(BaseQubit):
 
         # Flux Bias line's gap part, inside the GND
         flux_bias_pad_gap = draw.Polygon([
-             (-fbl_width*2, p.pad_head_length+fbl_sep-cpw_gap*4),   # point k
-             (fbl_width*2, p.pad_head_length+fbl_sep-cpw_gap*4),    # point l
-             (cpw_gap*2, p.pad_head_length+fbl_sep+fbl_height),   # point m
-             (-cpw_gap*2, p.pad_head_length+fbl_sep+fbl_height),   # point n
+             (-fbl_width*2, p.pad_head_length+fbl_sep-cpw_gap*2),   # point k
+             (fbl_width*2, p.pad_head_length+fbl_sep-cpw_gap*2),    # point l
+             (cpw_gap*4, p.pad_head_length+fbl_sep+fbl_height),   # point m
+             (-cpw_gap*4, p.pad_head_length+fbl_sep+fbl_height),   # point n
         ])
-        flux_bias_cpwline_gap = draw.rectangle(cpw_width+cpw_gap*2, fbl_height, 0, p.pad_head_length+fbl_sep+fbl_height)
+        flux_bias_cpwline_gap = draw.rectangle(cpw_width+cpw_gap*4, fbl_height, 0, p.pad_head_length+fbl_sep+fbl_height)
         flux_bias_line_gap = draw.union(flux_bias_pad_gap, flux_bias_cpwline_gap)
 
         # Flux-Bias Line CPW wire
