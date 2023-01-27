@@ -44,12 +44,18 @@ Submodules
     import_export
     math_and_overrides
     parsing
+    layer_stack_handler
+    bounds_for_path_and_poly_tables
+    determine_larger_box
 
 """
 
 from .parsing import parse_value
 from .parsing import is_variable_name
 from .parsing import is_numeric_possible
+from .parsing import parse_units
+from .layer_stack_handler import LayerStackHandler
+from .bounds_for_path_and_poly_tables import BoundsForPathAndPolyTables, determine_larger_box
 
 from .. import config
 if config.is_building_docs():
@@ -59,3 +65,5 @@ if config.is_building_docs():
     from . import import_export
     from . import parsing
     from . import math_and_overrides
+    from . import layer_stack_handler
+    from . import bounds_for_path_and_poly_tables

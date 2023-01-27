@@ -20,7 +20,7 @@ import sys
 import traceback
 import warnings
 from copy import deepcopy
-from typing import Dict, List, TYPE_CHECKING, Tuple, Callable
+from typing import Dict, List, TYPE_CHECKING, Tuple, Callable, Union
 import inspect
 
 import pandas as pd
@@ -399,6 +399,33 @@ def bad_fillet_idxs(coords: list,
     return badlist
 
 
+def good_fillet_idxs(coords: list,
+                     fradius: float,
+                     precision: int = 9,
+                     isclosed: bool = False):
+    """
+    Get list of vertex indices in a linestring (isclosed = False) or polygon (isclosed = True)
+    that can be filleted based on proximity to neighbors.
+
+    Args:
+        coords (list): Ordered list of tuples of vertex coordinates.
+        fradius (float): User-specified fillet radius from QGeometry table.
+        precision (int, optional): Digits of precision used for round(). Defaults to 9.
+        isclosed (bool, optional): Boolean denoting whether the shape is a linestring or
+            polygon. Defaults to False.
+
+    Returns:
+        list: List of indices of vertices that can be filleted.
+    """
+    if isclosed:
+        return toggle_numbers(
+            bad_fillet_idxs(coords, fradius, precision, isclosed=True),
+            len(coords))
+    return toggle_numbers(
+        bad_fillet_idxs(coords, fradius, precision, isclosed=False),
+        len(coords))[1:-1]
+
+
 def get_range_of_vertex_to_not_fillet(coords: list,
                                       fradius: float,
                                       precision: int = 9,
@@ -586,3 +613,25 @@ def get_all_args(func: Callable) -> List:
             continue
         args.append(param.name)
     return args
+
+
+#####################################################################################
+# Used for each row in qgeometry table to clean the name entered by user.
+
+
+def get_clean_name(name: str) -> str:
+    """Create a valid variable name from the given one by removing having it
+    begin with a letter or underscore followed by an unlimited string of
+    letters, numbers, and underscores.
+
+    Args:
+        name (str): Initial, possibly unusable, string to be modified.
+
+    Returns:
+        str: Variable name consistent with Python naming conventions.
+    """
+    # Remove invalid characters
+    name = re.sub("[^0-9a-zA-Z_]", "", name)
+    # Remove leading characters until we find a letter or underscore
+    name = re.sub("^[^a-zA-Z_]+", "", name)
+    return name
