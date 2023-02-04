@@ -76,8 +76,8 @@ class Tmon(BaseQubit):
         * jj_gap: '40um' -- Width of the pseudo junction on the y-axis. Really just for simulating in HFSS / other EM software
         * pad_head_width: '400um' -- The 'head' capacitance length along the x-axis
         * pad_head_length: '400um' -- The 'head' capacitance length along the y-axis
-        * pad_arm_width: '100um' -- The 'equator' capacitance length along the x-axis
-        * pad_arm_length: 1000um' -- The 'equator' capacitance length along the y-axis
+        * pad_arm_width: '100um' -- The 'equator' capacitance length along the y-axis
+        * pad_arm_length: 1000um' -- The 'equator' capacitance length along the x-axis
         * palm_radius: '50um' -- Radius of the circle at the end of the pads (equator)
         * pad_gap: '80um' -- The distance between capacitance to ground plane, AKA etch gap
         * orientation: '0' -- Degree of qubit rotation
