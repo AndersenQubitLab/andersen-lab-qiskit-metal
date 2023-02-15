@@ -245,10 +245,10 @@ class Tmon(BaseQubit):
         fake_port_line = draw.LineString([(-(fbl_length+cpw_width), d+(fbl_height+fbl_sep)), 
                                     (0, d+(fbl_height+fbl_sep))]) #point e, kinda
 
-        objects = [flux_bias_line, flux_bias_line_gap, port_line]
+        objects = [flux_bias_line, flux_bias_line_gap, port_line, fake_port_line]
         objects = draw.rotate(objects, p.orientation, origin=(0, 0))
         objects = draw.translate(objects, p.pos_x, p.pos_y)
-        [flux_bias_line, flux_bias_line_gap, port_line] = objects
+        [flux_bias_line, flux_bias_line_gap, port_line, fake_port_line] = objects
 
         self.add_qgeometry('poly', {'flux_bias_line': flux_bias_line})
         self.add_qgeometry('poly', {'flux_bias_line_gap': flux_bias_line_gap}, subtract=True)        
