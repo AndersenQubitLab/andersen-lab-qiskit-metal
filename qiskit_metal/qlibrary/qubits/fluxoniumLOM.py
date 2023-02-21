@@ -40,8 +40,8 @@ class FluxoniumPocket(BaseQubit):
         Below is a sketch of the qubit
         ::
                                0
-        
-                             | | |  Charge line
+                               |
+                             | | |  charge_line
                  +1          \___/           +1
                 _______________________________
             -1 |              ___              | +1        Y
@@ -49,9 +49,9 @@ class FluxoniumPocket(BaseQubit):
                |             \   /             |           |
                |              | |___           |           |----->  X
                |              |_|   |    ______|
-               |               |    |   |  ____|-- fake_port_line
+               |               |    |   |  ____|-- fake_flux_bias_line
                |               x    |   | |____|__
-               |               |    |   |_________-- Flux bias line
+               |               |    |   |_________-- flux_bias_line
                |              | |___|          |
                |              | |              |
                |             /   \             |
@@ -63,7 +63,7 @@ class FluxoniumPocket(BaseQubit):
                          \  \_______/  /
                           \___  |  ___/
                               | | | 
-                          Read out line
+                                | readout_line
 
     .. image::
         FluxoniumPocket.png

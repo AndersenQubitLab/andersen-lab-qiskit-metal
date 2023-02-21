@@ -32,21 +32,20 @@ class Tmon(BaseQubit):
         Create a grounded tunable tmon qubit with two josephson junction
         (see drawing below).
 
-    Has only one connector line were added using the `flux-bias line` dictionaries. The connector pad
-    has a name and a list of default properties.
+    Has only one connector line and it is added by using the `flux-bias line` dictionaries.
+    The connector pad has a name and a list of default properties.
 
     Sketch:
         Below is a sketch of the qubit
         ::
                              0
                             
-                             |  
-                           | | |
-                           | | |
-                          / / \ \
-                         / /___\ \   Flux bias line
-                        /_________\ 
-
+                                 |  Flux bias line
+    fake_flux_bias_line  |      | |
+                         _      | |
+                        | |     | |
+                        | |_____| |  
+                        |_________| 
                          _________
                  +1      |  |  |  |       +1
                          |  x  x  |
@@ -57,10 +56,10 @@ class Tmon(BaseQubit):
                          |  |  |  |
                 _________|  |  |  |________
                /   _________|  |_________   \           
-              |   /                      \   |
-              |  |                        |  |
-               \  \______________________/  /
-           -1   \__________________________/     +1
+              /  /                       \   \
+             |  |                         |  |
+              \  \_______________________/  /
+           -1  \___________________________/     +1
              
                  -1                       -1
 
@@ -73,19 +72,20 @@ class Tmon(BaseQubit):
 
     Default Options:
         * inductor_width: '10um' -- Width of the pseudo junction on the x-axis. Really just for simulating in HFSS / other EM software
-        * jj_gap: '40um' -- Width of the pseudo junction on the y-axis. Really just for simulating in HFSS / other EM software
-        * pad_head_width: '400um' -- The 'head' capacitance lenght along the x-axis
-        * pad_head_length: '400um' -- The 'head' capacitance lenght along the y-axis
-        * pad_arm_width: '100um' -- The 'equator' capacitance lenght along the x-axis
-        * pad_arm_lenght: 1000um' -- The 'equator' capacitance lenght along the y-axis
+        * jj_gap: '30um' -- Width of the pseudo junction on the y-axis. Really just for simulating in HFSS / other EM software
+        * pad_head_width: '400um' -- The 'head' capacitance length along the x-axis
+        * pad_head_length: '800um' -- The 'head' capacitance length along the y-axis
+        * pad_arm_width: '100um' -- The 'equator' capacitance length along the y-axis
+        * pad_arm_length: 1000um' -- The 'equator' capacitance length along the x-axis
         * palm_radius: '50um' -- Radius of the circle at the end of the pads (equator)
         * pad_gap: '80um' -- The distance between capacitance to ground plane, AKA etch gap
+        * pad_armgap: '10um' -- The distance around the arms to the ground, arms will be in FX pocket.
         * orientation: '0' -- Degree of qubit rotation
         * flux_bias_line_options=Dict
             * make_fbl = True -- Boolean to make the flux bias line 
             * fbl_sep: '100um' -- The separation between the flux bias line and the jj along the y-axis
-            * fbl_height: '50um' -- The height of the flux bias pad along the y-axis
-            * fbl_width: '30um' --  The width of the flux bias pad along the x-axis
+            * fbl_height: '50um' -- The height of the flux bias line along the y-axis
+            * fbl_length: '30um' --  The width of the flux bias line along the x-axis
             * cpw_width: 'cpw_width' -- The width of the flux bias line
             * cpw_gap: 'cpw_gap' -- The dielectric gap width of the flux bias line
     """
@@ -102,12 +102,13 @@ class Tmon(BaseQubit):
         chip='main',
         inductor_width='10um',
         jj_gap='30um',
-        pad_head_width='40um',
+        pad_head_width='15um',
         pad_head_length='400um',
-        pad_arm_width='100um',
-        pad_arm_lenght='1000um',
-        palm_radius='80um',
-        pad_gap='80um',
+        pad_arm_width='15um',
+        pad_arm_length='1400um',
+        palm_radius='25um',
+        pad_gap='100um',
+        pad_armgap='5um',
         # 90 has dipole aligned along the +X axis,
         # while 0 has dipole aligned along the +Y axis
         orientation='0',
@@ -115,7 +116,7 @@ class Tmon(BaseQubit):
             make_fbl = False,
             fbl_sep='60um',
             fbl_height ='80um',
-            fbl_width = '30um',
+            fbl_length = '30um',
             cpw_width ='cpw_width',
             cpw_gap = 'cpw_gap',
         ))
@@ -148,9 +149,10 @@ class Tmon(BaseQubit):
         pad_head_width = p.pad_head_width
         pad_head_length = p.pad_head_length
         pad_arm_width = p.pad_arm_width
-        pad_arm_length = p.pad_arm_lenght
+        pad_arm_length = p.pad_arm_length
         palm_radius = p.palm_radius
         pad_gap = p.pad_gap
+        pad_armgap = p.pad_armgap
         
         # Draw 'the arms', the capacitance. 
         pad_north = draw.rectangle(pad_head_width, pad_head_length, 0, pad_head_length/2) # pad_head drawned and define as pad_north
@@ -161,11 +163,11 @@ class Tmon(BaseQubit):
         # we union all the capacitance as 't' shape
         tmon = draw.union(pad_north, pad_equator, pad_palm_left, pad_palm_right)
 
-        # grounded tmon needs to have gap around it
+        # The gap around it
         pad_gap_north = draw.rectangle(pad_head_width+2*pad_gap, pad_head_length+2*jj_gap, 0, pad_head_length/2)
-        pad_gap_equator = draw.rectangle(pad_arm_length+2*pad_gap, pad_arm_width+pad_gap*2, 0, 0)
-        pad_palm_gap_left = draw.Point(-pad_arm_length/2, 0).buffer(palm_radius*2)
-        pad_palm_gap_right = draw.Point(pad_arm_length/2, 0).buffer(palm_radius*2)
+        pad_gap_equator = draw.rectangle(pad_arm_length+2*pad_armgap, pad_arm_width+pad_gap*2, 0, 0)
+        pad_palm_gap_left = draw.Point(-pad_arm_length/2, 0).buffer(palm_radius*1.5)
+        pad_palm_gap_right = draw.Point(pad_arm_length/2, 0).buffer(palm_radius*1.5)
         # again we union all the gap part as one and called pad_etch. Will be etched away during fab
         pad_etch = draw.union(pad_gap_north, pad_gap_equator, pad_palm_gap_left, pad_palm_gap_right)
 
@@ -202,7 +204,7 @@ class Tmon(BaseQubit):
 
         # define commonly used variables once
         fbl_sep = pfb.fbl_sep
-        fbl_width = pfb.fbl_width
+        fbl_length = pfb.fbl_length
         fbl_height = pfb.fbl_height
         cpw_width = pfb.cpw_width
         cpw_gap = pfb.cpw_gap
@@ -210,36 +212,43 @@ class Tmon(BaseQubit):
         # Define the geometry
         # Flux Bias Line
         
-        # Draw the top line of the flux-bias line
-        flux_bias_pad = draw.Polygon([
-             (-fbl_width/2, p.pad_head_length+fbl_sep),   # point a
-             (fbl_width/2, p.pad_head_length+fbl_sep),    # point b
-             (cpw_width/2, p.pad_head_length+fbl_sep+fbl_height),   # point c
-             (-cpw_width/2, p.pad_head_length+fbl_sep+fbl_height),   # point f
+        # Draw the flux-bias line
+        d = p.pad_head_length+p.jj_gap
+        flux_bias_line = draw.Polygon([
+             (-fbl_length/2-cpw_width, d+fbl_height+fbl_sep),   # point a
+             (-fbl_length/2, d+fbl_height+fbl_sep),    # point b
+             (-fbl_length/2, d+fbl_sep+cpw_width),   # point c
+             (fbl_length/2, d+fbl_sep+cpw_width),   # point d
+             (fbl_length/2, d+2*(fbl_height+fbl_sep)),   # point e
+             (fbl_length/2+cpw_width, d+2*(fbl_height+fbl_sep)),   # point f
+             (fbl_length/2+cpw_width, d+fbl_sep),   # point g
+             (-fbl_length/2-cpw_width, d+fbl_sep),   # point i
         ])
-        flux_bias_cpwline = draw.rectangle(cpw_width, fbl_height, 0, p.pad_head_length+fbl_sep+fbl_height)
-        flux_bias_line = draw.union(flux_bias_pad, flux_bias_cpwline)
- 
- #       flux_bias_line = draw.union(flux_bias_lineup, flux_bias_linemid,  flux_bias_linebot, circle_top, circle_bot)
-
-        # Flux Bias line's gap part, inside the GND
-        flux_bias_pad_gap = draw.Polygon([
-             (-fbl_width*2, p.pad_head_length+fbl_sep-cpw_gap*2),   # point k
-             (fbl_width*2, p.pad_head_length+fbl_sep-cpw_gap*2),    # point l
-             (cpw_gap*4, p.pad_head_length+fbl_sep+fbl_height),   # point m
-             (-cpw_gap*4, p.pad_head_length+fbl_sep+fbl_height),   # point n
+         
+        # Flux Bias line's gap part
+        flux_bias_line_gap = draw.Polygon([
+             (-fbl_length/2-cpw_width-cpw_gap, d+fbl_height+fbl_sep),   # point a
+             (-fbl_length/2+cpw_gap, d+fbl_height+fbl_sep),    # point b
+             (-fbl_length/2+cpw_gap, d+fbl_sep+cpw_width+cpw_gap),   # point c
+             (fbl_length/2-cpw_gap, d+fbl_sep+cpw_width+cpw_gap),   # point d
+             (fbl_length/2-cpw_gap, d+2*(fbl_height+fbl_sep)),   # point e
+             (fbl_length/2+cpw_width+cpw_gap, d+2*(fbl_height+fbl_sep)),   # point f
+             (fbl_length/2+cpw_width+cpw_gap, d+fbl_sep-cpw_gap),   # point g
+             (-fbl_length/2-cpw_width-cpw_gap, d+fbl_sep-cpw_gap),   # point i
         ])
-        flux_bias_cpwline_gap = draw.rectangle(cpw_width+cpw_gap*4, fbl_height, 0, p.pad_head_length+fbl_sep+fbl_height)
-        flux_bias_line_gap = draw.union(flux_bias_pad_gap, flux_bias_cpwline_gap)
-
+        
         # Flux-Bias Line CPW wire
-        port_line = draw.LineString([(-fbl_height, (p.pad_head_length+fbl_sep+fbl_height*1.5)), 
-                                    (fbl_height, (p.pad_head_length+fbl_sep+fbl_height*1.5))])
+        port_line = draw.LineString([(-(fbl_length/15-cpw_width), d+2*(fbl_height+fbl_sep)), 
+                                    (fbl_length+cpw_gap, d+2*(fbl_height+fbl_sep))]) #point e
 
-        objects = [flux_bias_line, flux_bias_line_gap, port_line]
+        # Fake Flux-Bias Line CPW wire
+        fake_port_line = draw.LineString([(-(fbl_length+cpw_width), d+(fbl_height+fbl_sep)), 
+                                    (0, d+(fbl_height+fbl_sep))]) #point e, kinda
+
+        objects = [flux_bias_line, flux_bias_line_gap, port_line, fake_port_line]
         objects = draw.rotate(objects, p.orientation, origin=(0, 0))
         objects = draw.translate(objects, p.pos_x, p.pos_y)
-        [flux_bias_line, flux_bias_line_gap, port_line] = objects
+        [flux_bias_line, flux_bias_line_gap, port_line, fake_port_line] = objects
 
         self.add_qgeometry('poly', {'flux_bias_line': flux_bias_line})
         self.add_qgeometry('poly', {'flux_bias_line_gap': flux_bias_line_gap}, subtract=True)        
@@ -250,3 +259,7 @@ class Tmon(BaseQubit):
         port_line_cords = list(draw.shapely.geometry.shape(port_line).coords)
         self.add_pin('flux_bias_line', 
                     port_line_cords, cpw_width)
+
+        fake_port_line_cords = list(draw.shapely.geometry.shape(fake_port_line).coords)
+        self.add_pin('fake_flux_bias_line', 
+                    fake_port_line_cords, cpw_width)
