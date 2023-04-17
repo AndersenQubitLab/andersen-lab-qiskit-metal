@@ -42,8 +42,8 @@ class FluxoniumPocket(BaseQubit):
         ::
                                0
         
-                             | | |  Charge line
-                 +1          \___/           +1
+                               | | |  Charge line
+                 +1            \___/         +1
                 _______________________________
             -1 |              ___              | +1        Y
                |             /   \             |           ^   
