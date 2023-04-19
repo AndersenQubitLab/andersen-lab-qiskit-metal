@@ -12,7 +12,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-# This class was created by Figen YILMAZ
+# This class was created by Figen YILMAZ, Siyu Wang
 """Grounded Tmon"""
 
 from operator import length_hint
@@ -261,7 +261,7 @@ class Tmon_c(BaseQubit):
         ])
         
         # Flux-Bias Line CPW wire
-        port_line = draw.LineString([(-(fbl_length/15-cpw_width), d+2*(fbl_height+fbl_sep)), 
+        port_line = draw.LineString([(-(fbl_length-cpw_gap*4), d+2*(fbl_height+fbl_sep)), 
                                     (fbl_length+cpw_gap, d+2*(fbl_height+fbl_sep))]) #point e
 
         # Fake Flux-Bias Line CPW wire
