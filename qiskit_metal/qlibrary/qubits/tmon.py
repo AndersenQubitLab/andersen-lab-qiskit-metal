@@ -238,8 +238,8 @@ class Tmon(BaseQubit):
         ])
         
         # Flux-Bias Line CPW wire
-        port_line = draw.LineString([(-(fbl_length-cpw_gap*4), d+2*(fbl_height+fbl_sep)), 
-                                    (fbl_length+cpw_gap, d+2*(fbl_height+fbl_sep))]) #point e
+        port_line = draw.LineString([(0, d+2*(fbl_height+fbl_sep)), 
+                                    ((fbl_length+cpw_width), d+2*(fbl_height+fbl_sep))]) #point e
 
         # Fake Flux-Bias Line CPW wire
         fake_port_line = draw.LineString([(-(fbl_length+cpw_width), d+(fbl_height+fbl_sep)), 
