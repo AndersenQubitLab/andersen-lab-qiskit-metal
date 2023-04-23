@@ -50,7 +50,7 @@ class FluxoniumPocket(BaseQubit):
                |             \   /             |           |
                |              | |___           |           |----->  X
                |              |_|   |    ______|
-               |               |    |   |  ____|
+               |               |    |   |  ____|-- fake_port_line
                |               x    |   | |____|__
                |               |    |   |_________-- Flux bias line
                |              | |___|          |
@@ -361,11 +361,15 @@ class FluxoniumPocket(BaseQubit):
         # Flux-Bias Line CPW wire
         port_line = draw.LineString([((d+fbl_sep/2), 0), 
                                     ((d+fbl_sep/2), -(fbl_height+cpw_width))])
+        
+        # This port line is a fake port line, it is only for LOM analyses because we need to have an ungrounded line for the flux-bias 
+        fake_port_line = draw.LineString([(d, (fbl_height*2+cpw_width*2)), 
+                                    (d, -(fbl_height+cpw_width))])
 
-        objects = [flux_bias_line, flux_bias_line_gap, port_line]
+        objects = [flux_bias_line, flux_bias_line_gap, port_line, fake_port_line]
         objects = draw.rotate(objects, p.orientation, origin=(0, 0))
         objects = draw.translate(objects, p.pos_x, p.pos_y)
-        [flux_bias_line, flux_bias_line_gap, port_line] = objects
+        [flux_bias_line, flux_bias_line_gap, port_line, fake_port_line] = objects
 
         self.add_qgeometry('poly', {'flux_bias_line': flux_bias_line})
         self.add_qgeometry('poly', {'flux_bias_line_gap': flux_bias_line_gap}, subtract=True)        
@@ -376,6 +380,10 @@ class FluxoniumPocket(BaseQubit):
         port_line_cords = list(draw.shapely.geometry.shape(port_line).coords)
         self.add_pin('flux_bias_line', 
                     port_line_cords, cpw_width)
+        
+        fake_port_line_cords = list(draw.shapely.geometry.shape(fake_port_line).coords)
+        self.add_pin('fake_flux_bias_line', 
+                    fake_port_line_cords, cpw_width)
 
     def make_charge_line(self):
         """ Adds charge line to fluxonium pocket."""
