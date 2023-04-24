@@ -371,13 +371,8 @@ class FluxoniumPocket(BaseQubit):
         objects = draw.translate(objects, p.pos_x, p.pos_y)
         [flux_bias_line, flux_bias_line_gap, port_line, fake_port_line] = objects
 
-        objects = [flux_bias_line, flux_bias_line_gap, port_line]
-        objects = draw.rotate(objects, p.orientation, origin=(0, 0))
-        objects = draw.translate(objects, p.pos_x, p.pos_y)
-        [flux_bias_line, flux_bias_line_gap, port_line] = objects
-
         self.add_qgeometry('poly', {'flux_bias_line': flux_bias_line})
-        self.add_qgeometry('poly', {'flux_bias_line_gap': flux_bias_line_gap}, subtract=True)        
+        self.add_qgeometry('poly', {'flux_bias_line_gap': flux_bias_line_gap}, subtract=True)      
 
         ####################################################################
 

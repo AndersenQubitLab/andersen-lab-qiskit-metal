@@ -12,7 +12,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-# This class was created by Figen YILMAZ, Christian Kraglund ANDERSEN
+# This class was created by Figen YILMAZ, Christian Kraglund Andersen
 """Fluxonium Pocket"""
 
 from operator import length_hint
