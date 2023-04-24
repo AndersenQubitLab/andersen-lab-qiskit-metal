@@ -37,6 +37,8 @@ class FluxoniumPocket(BaseQubit):
     & `charge line` dictionaries. Each connector pad has a name and 
     a list of default properties.
 
+    This called v2, because the charge line is a bit on the flux-bias line. 
+
     Sketch:
         Below is a sketch of the qubit
         ::
@@ -48,12 +50,12 @@ class FluxoniumPocket(BaseQubit):
             -1 |              ___              | +1        Y
                |             /   \             |           ^   
                |             \   /             |           |
-               |              | |___           |           |----->  X
-               |              |_|   |    ______|
-               |               |    |   |  ____|-- fake_port_line (this is necessary for LOM analysis, only)
-               |               x    |   | |____|__
-               |               |    |   |_________-- flux_bias_line
-               |              | |___|          |
+               |              | |__            |           |----->  X
+               |              |_|  |     ______|
+               |               |   |    |  ____|-- fake_port_line (this is necessary for LOM analysis, only)
+               |               x   |    | |____|__
+               |               |   |    |_________-- flux_bias_line
+               |              | |__|           |
                |              | |              |
                |             /   \             |
                |             \___/             |

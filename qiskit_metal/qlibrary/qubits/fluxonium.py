@@ -48,12 +48,12 @@ class FluxoniumPocket(BaseQubit):
             -1 |              ___              | +1        Y
                |             /   \             |           ^   
                |             \   /             |           |
-               |              | |___           |           |----->  X
-               |              |_|   |    ______|
-               |               |    |   |  ____|-- fake_port_line (this is necessary for LOM analysis, only)
-               |               x    |   | |____|__
-               |               |    |   |_________-- flux_bias_line
-               |              | |___|          |
+               |              | |__            |           |----->  X
+               |              |_|  |     ______|
+               |               |   |    |  ____|-- fake_port_line (this is necessary for LOM analysis, only)
+               |               x   |    | |____|__
+               |               |   |    |_________-- flux_bias_line
+               |              | |__|           |
                |              | |              |
                |             /   \             |
                |             \___/             |
