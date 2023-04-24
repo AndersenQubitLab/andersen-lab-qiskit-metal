@@ -12,7 +12,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-# This class was created by Figen YILMAZ, Christian Kraglund Andersen
+# This class was created by Figen YILMAZ, Christian Kraglund ANDERSEN
 """Fluxonium Pocket"""
 
 from operator import length_hint
@@ -42,8 +42,8 @@ class FluxoniumPocket(BaseQubit):
         ::
                                0
         
-                             | | |  charge_line
-                 +1          \___/           +1
+                               | | |  charge_line
+                 +1            \___/         +1
                 _______________________________
             -1 |              ___              | +1        Y
                |             /   \             |           ^   
@@ -91,7 +91,7 @@ class FluxoniumPocket(BaseQubit):
             * fbl_sep: '100um' -- The separation between the flux bias line and the inductor along the x-axis
             * fbl_height: '50um' -- The height of the flux bias line along the y-axis
             * cpw_width: 'cpw_width' -- The width of the flux bias line
-            * cpw_gap: 'cpw_gap' -- The dielectric gap width of the flux bias line
+            * cpw_gap: 'cpw_gap' -- The dielectric gap width of the flux bias line    
         * charge_line_options=Dict
             * make_cl = True -- Boolean to make the charge line
             * cl_length: '80um' -- 
@@ -371,11 +371,6 @@ class FluxoniumPocket(BaseQubit):
         objects = draw.translate(objects, p.pos_x, p.pos_y)
         [flux_bias_line, flux_bias_line_gap, port_line, fake_port_line] = objects
 
-        objects = [flux_bias_line, flux_bias_line_gap, port_line]
-        objects = draw.rotate(objects, p.orientation, origin=(0, 0))
-        objects = draw.translate(objects, p.pos_x, p.pos_y)
-        [flux_bias_line, flux_bias_line_gap, port_line] = objects
-
         self.add_qgeometry('poly', {'flux_bias_line': flux_bias_line})
         self.add_qgeometry('poly', {'flux_bias_line_gap': flux_bias_line_gap}, subtract=True)        
 
@@ -414,18 +409,18 @@ class FluxoniumPocket(BaseQubit):
 
         # Define the geometry
         # Charge Line
-        charge_line = draw.rectangle(cpw_width, cl_length, 0, 0)
-        charge_line_gap = draw.rectangle(cpw_width+2*cpw_gap, cl_length+cpw_gap/2, 0, -cpw_gap/4)
+        charge_line = draw.rectangle(cpw_width, cl_length, p.pad_radius/2, 0)
+        charge_line_gap = draw.rectangle(cpw_width+2*cpw_gap, cl_length+cpw_gap/2, p.pad_radius/2, -cpw_gap/4)
 
         # Making the charge_line and charge_line_gap circle and union them to charge_line and it's gap
-        charge_line_round = draw.Point(0., (-cl_length)/2).buffer(cpw_width)
-        charge_line_gap_round = draw.Point(0., -(cl_length+cpw_gap)/2.2).buffer((cpw_width+2*cpw_gap))
+        charge_line_round = draw.Point(p.pad_radius/2, (-cl_length)/2).buffer(cpw_width)
+        charge_line_gap_round = draw.Point(p.pad_radius/2, -(cl_length+cpw_gap)/2.2).buffer((cpw_width+2*cpw_gap))
         charge_line = draw.union(charge_line, charge_line_round)
         charge_line_gap = draw.union(charge_line_gap, charge_line_gap_round)
 
         # Charge Line CPW wire
-        port_line = draw.LineString([(-cpw_width/2, cl_length/2),
-                                     (cpw_width/2, cl_length/2)])
+        port_line = draw.LineString([(-cpw_width+p.pad_radius/2, cl_length/2),
+                                     (cpw_width+p.pad_radius/2, cl_length/2)])
         
         # Position the charge_line, rotate and translate
         objects = [charge_line, charge_line_gap, port_line]

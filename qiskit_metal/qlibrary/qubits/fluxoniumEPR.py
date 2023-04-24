@@ -12,7 +12,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-# This class was created by Figen YILMAZ, Christian Kraglund Andersen
+# This class was created by Figen YILMAZ, Christian Kraglund ANDERSEN
 """Fluxonium Pocket"""
 
 from operator import length_hint
@@ -91,7 +91,7 @@ class FluxoniumPocket(BaseQubit):
             * fbl_sep: '100um' -- The separation between the flux bias line and the inductor along the x-axis
             * fbl_height: '50um' -- The height of the flux bias line along the y-axis
             * cpw_width: 'cpw_width' -- The width of the flux bias line
-            * cpw_gap: 'cpw_gap' -- The dielectric gap width of the flux bias line
+            * cpw_gap: 'cpw_gap' -- The dielectric gap width of the flux bias line    
         * charge_line_options=Dict
             * make_cl = True -- Boolean to make the charge line
             * cl_length: '80um' -- 

@@ -129,7 +129,7 @@ class FluxoniumPocket(BaseQubit):
         l_length='100um',
         l_arm_width = '2um',
         l_arm_length='25um',
-        L_j = '34.38nH',
+        L_j = '16nH',
         pocket_width='900um',
         pocket_height='550um',
         # 90 has dipole aligned along the +X axis,
