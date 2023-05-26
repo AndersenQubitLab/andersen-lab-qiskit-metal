@@ -53,6 +53,8 @@ class EPRanalysis(QAnalysis):
                          dissipatives=Dict(dielectrics_bulk=['main']),
                          cos_trunc=8,
                          fock_trunc=7,
+                         flux=0,
+                         basis='std',
                          sweep_variable='Lj')
     """Default setup."""
 
@@ -170,7 +172,7 @@ class EPRanalysis(QAnalysis):
         self.get_stored_energy(no_junctions)
         if not no_junctions:
             self.run_analysis()
-            self.spectrum_analysis(self.setup.cos_trunc, self.setup.fock_trunc)
+            self.spectrum_analysis(self.setup.cos_trunc, self.setup.fock_trunc, self.setup.flux, self.setup.basis)
             try:
                 self.report_hamiltonian(self.setup.sweep_variable)
             except AttributeError:
@@ -218,11 +220,12 @@ class EPRanalysis(QAnalysis):
         """
         self.sim.renderer.epr_run_analysis()
 
-    def spectrum_analysis(self, cos_trunc: int = 8, fock_trunc: int = 7):
+    def spectrum_analysis(self, cos_trunc: int = 8, fock_trunc: int = 7, flux: float = 0, basis: str = 'std',
+                          junctions = None):
         """Short-cut to the same-name method found in renderers.ansys_renderer.py.
         Eventually, the analysis code needs to be only here, and the renderer method deprecated.
         """
-        self.sim.renderer.epr_spectrum_analysis(cos_trunc, fock_trunc)
+        self.sim.renderer.epr_spectrum_analysis(cos_trunc, fock_trunc, flux, basis, junctions)
 
     def report_hamiltonian(self, sweep_variable, numeric=True):
         """Short-cut to the same-name method found in renderers.ansys_renderer.py.

@@ -35,7 +35,6 @@ from qiskit_metal.draw.utility import to_vec3D
 from qiskit_metal.draw.basic import is_rectangle
 from qiskit_metal.renderers.renderer_base import QRendererAnalysis
 from qiskit_metal.toolbox_metal.parsing import is_true
-from qiskit_metal.designs.design_base import QDesign
 
 from qiskit_metal import Dict
 
@@ -103,7 +102,6 @@ class QAnsysRenderer(QRendererAnalysis):
         * _Rj: 0 -- _Rj *must* be 0 for pyEPR analysis! _Rj has units of Ohms
         * max_mesh_length_jj: '7um' -- Maximum mesh length for Josephson junction elements
         * project_path: None -- Default project path; if None --> get active
-        * max_mesh_length_port: '7um' -- Maximum mesh length for Ports in Eigenmode Simulations
         * project_name: None -- Default project name
         * design_name: None -- Default design name
         * ansys_file_extension: '.aedt' -- Ansys file extension for 2016 version and newer
@@ -124,7 +122,6 @@ class QAnsysRenderer(QRendererAnalysis):
         Cj=0,  # Cj *must* be 0 for pyEPR analysis! Cj has units of femtofarads (fF)
         _Rj=0,  # _Rj *must* be 0 for pyEPR analysis! _Rj has units of Ohms
         max_mesh_length_jj='7um',  # maximum mesh length for Josephson junction elements
-        max_mesh_length_port='7um', # maximum mesh length for Ports in Eigenmode Simulations
         project_path=None,  # default project path; if None --> get active
         project_name=None,  # default project name
         design_name=None,  # default design name
@@ -751,7 +748,6 @@ class QAnsysRenderer(QRendererAnalysis):
             self.clean_active_design()
         else:
             self.new_ansys_design(design_name, solution_type)
-
         self.set_variables(vars_to_initialize)
         self.render_design(**design_selection)
         return self.pinfo.design.name
@@ -991,10 +987,9 @@ class QAnsysRenderer(QRendererAnalysis):
 
         Chip_subtract_dict consists of component names (keys) and a set of all elements within each component that
         will eventually be subtracted from the ground plane. Add objects that are perfect conductors and/or have
-        meshing to self.assign_perfE and self.assign_mesh, respectively; both are initialized as empty lists. Similarly,
-        if the object is a port in an eigenmode simulation, add it to self.assign_port_mesh, which is initialized
-        as an empty list. Note that these objects are "refreshed" each time render_design is called (as opposed to
-        in the init function) to clear QAnsysRenderer of any leftover items from the last call to render_design.
+        meshing to self.assign_perfE and self.assign_mesh, respectively; both are initialized as empty lists. Note
+        that these objects are "refreshed" each time render_design is called (as opposed to in the init function)
+        to clear QAnsysRenderer of any leftover items from the last call to render_design.
 
         Among the components selected for export, there may or may not be unused (unconnected) pins.
         The second parameter, open_pins, contains tuples of the form (component_name, pin_name) that
@@ -1367,11 +1362,6 @@ class QAnsysRenderer(QRendererAnalysis):
                 #    self.chip_not_main()
                 #    return []
                 chip_names.add(icomps[qcomp_id].options.chip)
-
-        for unique_name in chip_names:
-            if unique_name not in self.design.chips:
-                self.chip_not_in_design_error(unique_name)
-
         return list(chip_names)
 
     def chip_designation_error(self):
@@ -1381,16 +1371,6 @@ class QAnsysRenderer(QRendererAnalysis):
         """
         self.logger.warning(
             "This component currently lacks a chip designation. Please add chip='main' to the component's default_options dictionary, restart the kernel, and try again."
-        )
-
-    def chip_not_in_design_error(self, missing_chip: str):
-        """
-        Warning message that appears when the Ansys renderer fails to locate a component's chip designation in DesignPlanar (or any child of QDesign).
-        Provides instructions for a temporary workaround until the layer stack is finalized.
-        """
-        self.logger.warning(
-            f'This component currently lacks a chip designation in DesignPlanar, or any child of QDesign. '
-            f'Please add dict for chip=\'{missing_chip}\' in DesignPlanar, or child of QDesign. Then restart the kernel, and try again.'
         )
 
     def chip_not_main(self):
@@ -1578,17 +1558,6 @@ class QAnsysRenderer(QRendererAnalysis):
                 MaxLength=self._options["max_mesh_length_jj"],
             )
 
-        try:
-            exists_port_mesh = (len(self.assign_port_mesh) > 0)
-        except:
-            exists_port_mesh = False
-
-        if exists_port_mesh:
-            self.modeler.mesh_length(
-                'port_mesh',
-                self.assign_port_mesh,
-                MaxLength=self._options['max_mesh_length_port'])
-
     # Still implementing
     def auto_wirebonds(self, table):
         """
@@ -1758,7 +1727,7 @@ class QAnsysRenderer(QRendererAnalysis):
             self.epr_start(junctions, dissipatives)
         self.epr_distributed_analysis.do_EPR_analysis()
 
-    def epr_spectrum_analysis(self, cos_trunc: int = 8, fock_trunc: int = 7):
+    def epr_spectrum_analysis(self, cos_trunc: int = 8, fock_trunc: int = 7, flux: float = 0,  basis: str = 'std', junctions=None):
         """Core epr analysis method.
 
         Args:
@@ -1768,7 +1737,10 @@ class QAnsysRenderer(QRendererAnalysis):
         self.epr_quantum_analysis = epr.QuantumAnalysis(
             self.epr_distributed_analysis.data_filename)
         self.epr_quantum_analysis.analyze_all_variations(cos_trunc=cos_trunc,
-                                                         fock_trunc=fock_trunc)
+                                                         fock_trunc=fock_trunc,
+                                                         flux=flux,
+                                                         basis=basis,
+                                                         junctions=junctions)
 
     def epr_report_hamiltonian(self,
                                swp_variable: str = "variation",
