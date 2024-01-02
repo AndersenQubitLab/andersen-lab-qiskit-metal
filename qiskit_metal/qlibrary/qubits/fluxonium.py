@@ -31,11 +31,13 @@ class FluxoniumPocket(BaseQubit):
     Description:
         Create a standard pocket fluxonium qubit for a ground plane,
         with two pads connected by a junction and a kinetic inductor 
-        between two pads (see drawing below).
+        between two pads (see drawing below), creates a magnetic loop
+        in between the main JJ and the JJ array (can be a nanowire too).
 
     Connector lines were added using the `flux-bias line` & `charge line`
-    & `charge line` dictionaries. Each connector pad has a name and 
-    a list of default properties.
+    & `readout line` dictionaries, the 'fake_flux_bias_line' is in use 
+    for Maxwell capacitance matrix, only. Each connector pad has a name and 
+    a list of default properties (except for the fake_flux_bias_line).
 
     Sketch:
         Below is a sketch of the qubit
@@ -48,12 +50,12 @@ class FluxoniumPocket(BaseQubit):
             -1 |              ___              | +1        Y
                |             /   \             |           ^   
                |             \   /             |           |
-               |              | |__            |           |----->  X
-               |              |_|  |     ______|
-               |               |   |    |  ____|-- fake_port_line (this is necessary for LOM analysis, only)
-               |               x   |    | |____|__
-               |               |   |    |_________-- flux_bias_line
-               |              | |__|           |
+               |              | |___           |           |----->  X
+               |              |_|   |    ______|
+               |               |    |   |  ____|-- fake_flux_bias_line
+               |               x    |   | |____|__
+               |               |    |   |_________-- flux_bias_line
+               |              | |___|          |
                |              | |              |
                |             /   \             |
                |             \___/             |
@@ -74,17 +76,23 @@ class FluxoniumPocket(BaseQubit):
 
     Default Options:
         * pad_gap: '30um' -- The distance between the two charge islands, which is also the resulting 'length' of the pseudo junction
-        * inductor_width: '20um' -- Width of the pseudo junction between the two charge islands (if in doubt, make the same as pad_gap). Really just for simulating in HFSS / other EM software
-        * pad_width: '30um' -- The width (x-axis) of the charge island pads
-        * pad_height: '300um' -- The size (y-axis) of the charge island pads
-        * pad_radius: '80um' -- Radius of the circle at the end of the pads
-        * l_length: '1um' -- Length of the kinetic inductor along the y-axis
-        * l_arm_length: '100um' -- Length of the arm of the kinetic inductor along the x-axis
-        * l_inductance: '200nH' -- 
-        * l_ind_per_square: '2nH' --
-        * L_j: '16.35nH' --
+        * jj_width: '20um' -- Width of the pseudo junction between the two charge islands (if in doubt, make the same as pad_gap). Really just for simulating in HFSS / other EM software
+        * jj_orientation: '1' -- Direction of the main JJ, fab related but all the JJs has to look at the same direction
+        * pad_width: '15um' -- The width (x-axis) of the charge island pads
+        * pad_height: '100um' -- The size (y-axis) of the charge island pads
+        * pad_radius: '60um' -- Radius of the circles at the end of the pads
+        * l_width: '1um' -- Width of the kinetic inductor along the x-axis
+        * array_length: '130um' -- Length of the array along the y-axis
+        * l_arm_width: '2um' -- Width of the arm of the kinetic inductor along the y-axis
+        * l_arm_length: '20um' -- Length of the arm of the kinetic inductor along the x-axis
+        * l_inductance: '200nH' -- The kinetic energy for the inductor
+        * L_j: '34.38nH' -- Josephson junction inductor value
+        * C_j: '1.4fF' -- Josephson junction capacitance value
+        * inductor_orientation: '-1' -- Direction of the array, fab related but all the JJs has to look at the same direction
         * pocket_width: '800um' -- Size of the pocket (cut out in ground) along x-axis
         * pocket_height: '800um' -- Size of the pocket (cut out in ground) along y-axis
+        * nanowire_inductor: 'True' -- Boolean for nanowire instead of array
+        * gds_cell_inductor: 'gds_cell_inductor' -- GDS cell name
         * orientation: '0' -- Degree of qubit rotation
         * flux_bias_line_options=Dict
             * make_fbl = True -- Boolean to make the flux bias line 
@@ -94,7 +102,7 @@ class FluxoniumPocket(BaseQubit):
             * cpw_gap: 'cpw_gap' -- The dielectric gap width of the flux bias line
         * charge_line_options=Dict
             * make_cl = True -- Boolean to make the charge line
-            * cl_length: '80um' -- 
+            * cl_length: '80um' -- Length of the charge line along the y-axis
             * cl_sep: '15um' -- The separation between the connection pad and the pocket the y-axis
             * cpw_width: 'cpw_width' -- The width of the charge line
             * cpw_gap: 'cpw_gap' -- The dielectric gap width of the charge line
@@ -119,11 +127,10 @@ class FluxoniumPocket(BaseQubit):
     """Component metadata"""
 
     # Default drawing options
-    default_options = Dict( 
-        chip='main',
+    default_options = Dict(
         pad_gap='30um',
-        inductor_width='10um',
-        inductor_orientation='-1',
+        jj_width='8um',
+        jj_orientation='1',
         pad_width='15um',
         pad_height='100um',
         pad_radius='60um',
@@ -131,9 +138,10 @@ class FluxoniumPocket(BaseQubit):
         array_length='130um',
         l_arm_width = '2um',
         l_arm_length='20um',
-        l_inductance='200nH',
-        l_ind_per_square='2nH',
-        L_j = '34.38nH',
+        l_inductance='218.823nH',
+        L_j = '40.7885nH',
+        C_j = '0.72fF',
+        inductor_orientation='-1',
         pocket_width='900um',
         pocket_height='550um',
         nanowire_inductor='True',
@@ -207,14 +215,8 @@ class FluxoniumPocket(BaseQubit):
         l_width = p.l_width
         nanowire_inductor = p.nanowire
 
-        l_inductance = float(p.l_inductance.replace('nH',''))
-
         # Drawing the kinectic inductor
         if nanowire_inductor == True:
-            # Calculate the L-tot
-            ind_per_square = float(p.l_ind_per_square.replace('nH',''))
-            l_length = l_inductance*l_width/ind_per_square
-
             inductor = draw.LineString([(l_arm_length, l_length/2), (l_arm_length, -l_length/2)])
         else:
             l_length = p.array_length
@@ -229,7 +231,7 @@ class FluxoniumPocket(BaseQubit):
             (l_arm_length, l_length/2), # point c
             (pad_width/2, l_length/2), # point d
             ])
-        l_arm_up_fillet = draw.Point(l_arm_length, l_length/2).buffer(l_arm_width)
+        l_arm_up_fillet = draw.Point(l_arm_length, l_length/2).buffer(l_arm_width) # Having semicircle with subtracting the geometries
         cut_ply_up = draw.Polygon([
              (l_arm_length-l_arm_width*2, l_length/2+l_arm_width*2),   # point o
              (l_arm_length, l_length/2+l_arm_width*2),    # point p
@@ -266,9 +268,10 @@ class FluxoniumPocket(BaseQubit):
         pad_bot = draw.union(pad_rect_bot, pad_circle_bot, l_arm_bot, l_arm_bot_fillet)
 
         # Draw the junction
-        rect_jj = draw.LineString([(0, -pad_gap/2), (0, +pad_gap/2)])
+        jj_o = float(p.jj_orientation) # one can change the JJ orientation. Fab related detail.
+        rect_jj = draw.LineString([(0, -pad_gap/2*jj_o), (0, +pad_gap/2*jj_o)])
         # the draw.rectangle representing the josephson junction
-        # rect_jj = draw.rectangle(p.inductor_width, pad_gap)
+        # rect_jj = draw.rectangle(p.jj_width, pad_gap)
 
         # Draw the pocket
         rect_pk = draw.rectangle(pocket_width, pocket_height)
@@ -287,12 +290,13 @@ class FluxoniumPocket(BaseQubit):
         self.add_qgeometry('junction', # kinetic inductor
                            dict(inductor=inductor),
                            width = l_width,
-                           hfss_inductance = str(l_inductance)+'nH',
+                           hfss_inductance = p.l_inductance,
                            gds_cell_name=p.gds_cell_inductor)
-        self.add_qgeometry('junction',
+        self.add_qgeometry('junction', # the main JJ
                            dict(rect_jj=rect_jj),
-                           width=p.inductor_width,
-                           hfss_inductance = p.L_j)
+                           width=p.jj_width,
+                           hfss_inductance = p.L_j,
+                           hfss_capacitance = p.C_j)
 
     def make_flux_bias_line(self):
         """ Adds flux bias line to fluxonium pocket."""
@@ -362,7 +366,7 @@ class FluxoniumPocket(BaseQubit):
         port_line = draw.LineString([((d+fbl_sep/2), 0), 
                                     ((d+fbl_sep/2), -(fbl_height+cpw_width))])
         
-        # This port line is a fake port line, it is only for LOM analyses because we need to have an ungrounded line for the flux-bias 
+        # This port line is a fake port line, it is only in use during LOM analyses because we need to have an ungrounded line for the flux-bias 
         fake_port_line = draw.LineString([(d, (fbl_height*2+cpw_width*2)), 
                                     (d, -(fbl_height+cpw_width))])
 

@@ -30,6 +30,7 @@ from scipy.spatial import distance
 import shapely
 import pyEPR as epr
 from pyEPR.ansys import parse_units, HfssApp, release
+from qiskit_metal.designs.design_base import QDesign
 
 from qiskit_metal.draw.utility import to_vec3D
 from qiskit_metal.draw.basic import is_rectangle
