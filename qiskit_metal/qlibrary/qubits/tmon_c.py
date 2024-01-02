@@ -40,13 +40,12 @@ class Tmon_c(BaseQubit):
         ::
                              0
                             
-                             |  
-                           | | |
-                           | | |
-                          / / \ \
-                         / /___\ \   Flux bias line
-                        /_________\ 
-
+                                 |  Flux bias line
+    fake_flux_bias_line  |      | |
+                         _      | |
+                        | |     | |
+                        | |_____| |  
+                        |_________| 
                          _________
                  +1      |  |  |  |       +1
                          |  x  x  |
@@ -72,7 +71,7 @@ class Tmon_c(BaseQubit):
         Tmon
 
     Default Options:
-        * inductor_width: '10um' -- Width of the pseudo junction on the x-axis. Really just for simulating in HFSS / other EM software
+        * jj_width: '10um' -- Width of the pseudo junction on the x-axis. Really just for simulating in HFSS / other EM software
         * jj_gap: '30um' -- Width of the pseudo junction on the y-axis. Really just for simulating in HFSS / other EM software
         * pad_head_width: '400um' -- The 'head' capacitance length along the x-axis
         * pad_head_length: '800um' -- The 'head' capacitance length along the y-axis
@@ -101,7 +100,7 @@ class Tmon_c(BaseQubit):
     # Default drawing options
     default_options = Dict(
         chip='main',
-        inductor_width='10um',
+        jj_width='3um', #don't change this value
         jj_gap='30um',
         pad_head_width='15um',
         pad_head_length='400um',
@@ -150,6 +149,7 @@ class Tmon_c(BaseQubit):
 
         # since we will reuse these options, parse them once and define them as variables
         jj_gap=p.jj_gap
+        jj_width=p.jj_width
         pad_head_width = p.pad_head_width
         pad_head_length = p.pad_head_length
         pad_arm_width = p.pad_arm_width
@@ -160,6 +160,40 @@ class Tmon_c(BaseQubit):
         circle_gap=p.circle_gap
         x_gap=p.x_gap
         r_gap=p.r_gap
+
+        
+        # Draw the junction's pads
+        JJpad_bottom = draw.Polygon([
+             (-pad_head_width/3., pad_head_length),   # point a
+             (pad_head_width/3., pad_head_length),    # point b
+             (pad_head_width/3., pad_head_length+jj_gap/2.),   # point c
+             (pad_head_width/4., pad_head_length+jj_gap/2.),   # point d
+             (pad_head_width/4., pad_head_length+jj_gap/3.),  # point e
+             (0, pad_head_length+jj_gap/4.),  # point f
+             (-pad_head_width/4., pad_head_length+jj_gap/3.),   # point g
+             (-pad_head_width/4., pad_head_length+jj_gap/2.),  # point h
+             (-pad_head_width/3., pad_head_length+jj_gap/2.),  # point i
+        ])
+        JJpad_up = draw.Polygon([
+             (-pad_head_width/3.+jj_width, pad_head_length+jj_gap),   # point k
+             (pad_head_width/3.+jj_width, pad_head_length+jj_gap),    # point l
+             (pad_head_width/3.+jj_width, pad_head_length+jj_gap/2.),   # point m
+             (pad_head_width/4.+jj_width, pad_head_length+jj_gap/2.),   # point n
+             (pad_head_width/4.+jj_width, pad_head_length+jj_gap/1.5),  # point o
+             (0+jj_width, pad_head_length+jj_gap/1.3),  # point p
+             (-pad_head_width/4.+jj_width, pad_head_length+jj_gap/1.5),   # point r
+             (-pad_head_width/4.+jj_width, pad_head_length+jj_gap/2.),  # point s
+             (-pad_head_width/3.+jj_width, pad_head_length+jj_gap/2.),  # point t
+        ])        
+        
+   #     jj_o = float(p.jj_orientation) # one can change the JJ orientation. Fab related detail.
+      #  rect_jj = draw.rectangle(jj_width, jj_width/2, -pad_width/16, pad_gap/12)
+        rect_jj1 = draw.LineString([((-pad_head_width/4.-pad_head_width/4.+jj_width)/2., pad_head_length+jj_gap/2.5), 
+                                    ((-pad_head_width/4.-pad_head_width/4.+jj_width)/2., pad_head_length+jj_gap/2.)])
+        rect_jj2 = draw.LineString([((pad_head_width/3.+pad_head_width/3.+jj_width)/2, pad_head_length+jj_gap/2.5), 
+                                    ((pad_head_width/3.+pad_head_width/3.+jj_width)/2, pad_head_length+jj_gap/2.)])
+        # the draw.rectangle representing the josephson junction
+        # rect_jj = draw.rectangle(p.jj_width, pad_gap)
         
         # Draw 'the arms', the capacitance. 
         pad_north = draw.rectangle(pad_head_width, pad_head_length, 0, pad_head_length/2) # pad_head drawned and define as pad_north
@@ -176,7 +210,7 @@ class Tmon_c(BaseQubit):
         pad_palm_right=draw.subtract(pad_palm_right,cut_sq_r)
         pad_palm_right=draw.subtract(pad_palm_right,sub_right)
         # we union all the capacitance as 't' shape
-        tmon = draw.union(pad_north, pad_equator, pad_palm_left, pad_palm_right)
+        tmon = draw.union(pad_north, pad_equator, pad_palm_left, pad_palm_right, JJpad_bottom, JJpad_up)
 
         # The gap around it
         pad_gap_north = draw.rectangle(pad_head_width+2*pad_gap, pad_head_length+2*jj_gap, 0, pad_head_length/2)
@@ -194,17 +228,17 @@ class Tmon_c(BaseQubit):
         # again we union all the gap part as one and called pad_etch. Will be etched away during fab
         pad_etch = draw.union(pad_gap_north, pad_gap_equator, pad_palm_gap_left, pad_palm_gap_right)
 
-        # Draw the junction
-        rect_jj = draw.LineString([(0, pad_head_length+jj_gap), 
-                                    (0, pad_head_length)])
-        # the draw.rectangle representing the josephson junction
-        # rect_jj = draw.rectangle(p.inductor_width, pad_gap)
+        # # Draw the junction
+        # rect_jj = draw.LineString([(0, pad_head_length+jj_gap), 
+        #                             (0, pad_head_length)])
+        # # the draw.rectangle representing the josephson junction
+        # # rect_jj = draw.rectangle(p.inductor_width, pad_gap)
 
         # Rotate and translate all qgeometry as needed.
-        polys = [rect_jj, tmon, pad_etch]
+        polys = [rect_jj1, rect_jj2, tmon, pad_etch]
         polys = draw.rotate(polys, p.orientation, origin=(0, 0))
         polys = draw.translate(polys, p.pos_x, p.pos_y)
-        [rect_jj, tmon, pad_etch] = polys
+        [rect_jj1, rect_jj2, tmon, pad_etch] = polys
 
         # Use the geometry to create Metal qgeometry
         self.add_qgeometry('poly', dict(tmon=tmon))
@@ -214,8 +248,8 @@ class Tmon_c(BaseQubit):
         # self.add_qgeometry('poly', dict(
         #     rect_jj=rect_jj), helper=True)
         self.add_qgeometry('junction',
-                           dict(rect_jj=rect_jj),
-                           width=p.inductor_width,
+                           dict(rect_jj1=rect_jj1, rect_jj2=rect_jj2),
+                           width=p.jj_width,
                            )
 
     def make_flux_bias_line(self):
